@@ -23,13 +23,13 @@ final class ParsersTests: XCTestCase {
         let dyckParser = DyckParser()
         
         let example1 = "(()())()"
-        let result1 = dyckParser.parse(example1)
-        XCTAssert(result1.0 == 4)
-        XCTAssert(result1.1.isEmpty)
+        let result1 = dyckParser.parse(from: example1)
+        XCTAssert(result1.value == 4)
+        XCTAssert(result1.endIndex == example1.endIndex)
         
         let example2 = "())()"
-        let result2 = dyckParser.parse(example2)
-        XCTAssert(result2.0 == 1)
-        XCTAssert(result2.1.startIndex == example2.index(example2.startIndex, offsetBy: 3))
+        let result2 = dyckParser.parse(from: example2)
+        XCTAssert(result2.value == 1)
+        XCTAssert(result2.endIndex == example2.index(example2.startIndex, offsetBy: 3))
     }
 }

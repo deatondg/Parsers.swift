@@ -43,17 +43,17 @@ public struct CatchParser<P: Parser, CatchFailure: Error>: Parser {
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            switch p.parse(stream) {
+        return { stream, index in
+            switch p.parse(stream, index) {
             case .failure(let parseFailure):
                 switch c(parseFailure) {
                 case .failure(let catchFailure):
                     return .failure(catchFailure)
                 case .success(let output):
-                    return .success((output, stream))
+                    return .success((output, index))
                 }
-            case .success(let (output, stream)):
-                return .success((output, stream))
+            case .success(let (output, index)):
+                return .success((output, index))
             }
         }
     }

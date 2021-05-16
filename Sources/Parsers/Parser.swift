@@ -10,18 +10,21 @@ public protocol Parser {
 }
 
 extension Parser {
-    func parse(_ stream: Stream) -> Result<(Output, Stream.Index), Failure> {
-        self.parse(stream, stream.startIndex)
+    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), Failure> {
+        self.parse(stream, index).map({ $0 })
     }
-}
-
-extension Parser where Failure == Never {
-    func parse(_ stream: Stream) -> (Output, Stream.Index) {
-        switch self.parse(stream, stream.startIndex) {
+    func parse(from stream: Stream) -> Result<(value: Output, endIndex: Stream.Index), Failure> {
+        self.parse(from: stream, startingAt: stream.startIndex)
+    }
+    func parse(from stream: Stream, startingAt index: Stream.Index) -> (value: Output, endIndex: Stream.Index) where Failure == Never {
+        switch self.parse(stream, index) {
         // Cannot fail
-        case .success(let (output, endIndex)):
-            return (output, endIndex)
+        case .success(let (output, index)):
+            return (output, index)
         }
+    }
+    func parse(from stream: Stream) -> (value: Output, endIndex: Stream.Index) where Failure == Never {
+        self.parse(from: stream, startingAt: stream.startIndex)
     }
 }
 

@@ -10,15 +10,15 @@ public struct FlattenFailableParser<P: Parser>: Parser where P.Output: Parser, P
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            switch p.parse(stream) {
+        return { stream, index in
+            switch p.parse(stream, index) {
             case .failure(let outerFailure):
                 return .failure(outerFailure)
-            case .success(let (outerOutput, stream)):
-                switch outerOutput.parse(stream) {
+            case .success(let (outerOutput, index)):
+                switch outerOutput.parse(stream, index) {
                 // Cannot fail
-                case .success(let (innerOutput, stream)):
-                    return .success((innerOutput, stream))
+                case .success(let (innerOutput, index)):
+                    return .success((innerOutput, index))
                 }
             }
         }

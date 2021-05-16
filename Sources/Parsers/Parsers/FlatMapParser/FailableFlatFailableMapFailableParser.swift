@@ -26,20 +26,20 @@ public struct FailableFlatFailableMapFailableParser<P: Parser, MapParser: Parser
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            switch p.parse(stream) {
+        return { stream, index in
+            switch p.parse(stream, index) {
             case .failure(let outerFailure):
                 return .failure(.outerFailure(outerFailure))
-            case .success(let (innerOutput, stream)):
+            case .success(let (innerOutput, index)):
                 switch f(innerOutput) {
                 case .failure(let mapFailure):
                     return .failure(.mapFailure(mapFailure))
                 case .success(let mapParser):
-                    switch mapParser.parse(stream) {
+                    switch mapParser.parse(stream, index) {
                     case .failure(let innerFailure):
                         return .failure(.innerFailure(innerFailure))
-                    case .success(let (outerOutput, stream)):
-                        return .success((outerOutput, stream))
+                    case .success(let (outerOutput, index)):
+                        return .success((outerOutput, index))
                     }
                 }
             }

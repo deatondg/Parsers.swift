@@ -25,22 +25,22 @@ public struct FailableFlatFailableCatchParser<P: Parser, CatchParser: Parser, Ca
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            switch p.parse(stream) {
+        return { stream, index in
+            switch p.parse(stream, index) {
             case .failure(let outerFailure):
                 switch c(outerFailure) {
                 case .failure(let catchFailure):
                     return .failure(.catchFailure(catchFailure))
                 case .success(let catchParser):
-                    switch catchParser.parse(stream) {
+                    switch catchParser.parse(stream, index) {
                     case .failure(let parseFailure):
                         return .failure(.parseFailure(parseFailure))
-                    case .success(let (catchOutput, stream)):
-                        return .success((catchOutput, stream))
+                    case .success(let (catchOutput, index)):
+                        return .success((catchOutput, index))
                     }
                 }
-            case .success(let (output, stream)):
-                return .success((output, stream))
+            case .success(let (output, index)):
+                return .success((output, index))
             }
         }
     }

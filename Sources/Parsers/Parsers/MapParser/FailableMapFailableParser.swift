@@ -25,16 +25,16 @@ public struct FailableMapFailableParser<P: Parser, MapOutput, MapFailure: Error>
     }
     
     public var parse: PrimitiveParser<Stream, MapOutput, Failure> {
-        return { stream in
-            switch p.parse(stream) {
+        return { stream, index in
+            switch p.parse(stream, index) {
             case .failure(let parseFailure):
                 return .failure(.parseFailure(parseFailure))
-            case .success(let (parseOutput, stream)):
+            case .success(let (parseOutput, index)):
                 switch f(parseOutput) {
                 case .failure(let mapFailure):
                     return .failure(.mapFailure(mapFailure))
                 case .success(let mapOutput):
-                    return .success((mapOutput, stream))
+                    return .success((mapOutput, index))
                 }
             }
         }

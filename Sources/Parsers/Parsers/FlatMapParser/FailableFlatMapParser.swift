@@ -12,15 +12,15 @@ public struct FailableFlatMapParser<P: Parser, MapParser: Parser>: Parser where 
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            switch p.parse(stream) {
+        return { stream, index in
+            switch p.parse(stream, index) {
             // Cannot fail
-            case .success(let (innerOutput, stream)):
-                switch f(innerOutput).parse(stream) {
+            case .success(let (innerOutput, index)):
+                switch f(innerOutput).parse(stream, index) {
                 case .failure(let innerFailure):
                     return .failure(innerFailure)
-                case .success(let (outerOutput, stream)):
-                    return .success((outerOutput, stream))
+                case .success(let (outerOutput, index)):
+                    return .success((outerOutput, index))
                 }
             }
             

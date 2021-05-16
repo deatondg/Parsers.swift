@@ -10,18 +10,18 @@ public struct AllOf1Parser<P0: Parser>: Parser {
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            var stream: Stream.SubSequence = stream
+        return { stream, index in
+            var index: Stream.Index = index
             let o0: P0.Output
             
-            switch p0.parse(stream) {
+            switch p0.parse(stream, index) {
             case .failure(let f0):
                 return .failure(.c0(f0))
             case .success(let s0):
-                (o0, stream) = s0
+                (o0, index) = s0
             }
             
-            return .success((o0, stream))
+            return .success((o0, index))
         }
     }
 }
@@ -39,25 +39,25 @@ public struct AllOf2Parser<P0: Parser, P1: Parser>: Parser where P1.Stream == P0
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            var stream: Stream.SubSequence = stream
+        return { stream, index in
+            var index: Stream.Index = index
             let o0: P0.Output
             let o1: P1.Output
             
-            switch p0.parse(stream) {
+            switch p0.parse(stream, index) {
             case .failure(let f0):
                 return .failure(.c0(f0))
             case .success(let s0):
-                (o0, stream) = s0
+                (o0, index) = s0
             }
-            switch p1.parse(stream) {
+            switch p1.parse(stream, index) {
             case .failure(let f1):
                 return .failure(.c1(f1))
             case .success(let s1):
-                (o1, stream) = s1
+                (o1, index) = s1
             }
             
-            return .success(((o0, o1), stream))
+            return .success(((o0, o1), index))
         }
     }
 }
@@ -77,32 +77,32 @@ public struct AllOf3Parser<P0: Parser, P1: Parser, P2: Parser>: Parser where P1.
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            var stream: Stream.SubSequence = stream
+        return { stream, index in
+            var index: Stream.Index = index
             let o0: P0.Output
             let o1: P1.Output
             let o2: P2.Output
             
-            switch p0.parse(stream) {
+            switch p0.parse(stream, index) {
             case .failure(let f0):
                 return .failure(.c0(f0))
             case .success(let x0):
-                (o0, stream) = x0
+                (o0, index) = x0
             }
-            switch p1.parse(stream) {
+            switch p1.parse(stream, index) {
             case .failure(let f1):
                 return .failure(.c1(f1))
             case .success(let x1):
-                (o1, stream) = x1
+                (o1, index) = x1
             }
-            switch p2.parse(stream) {
+            switch p2.parse(stream, index) {
             case .failure(let f2):
                 return .failure(.c2(f2))
             case .success(let s2):
-                (o2, stream) = s2
+                (o2, index) = s2
             }
             
-            return .success(((o0, o1, o2), stream))
+            return .success(((o0, o1, o2), index))
         }
     }
 }
@@ -124,39 +124,39 @@ public struct AllOf4Parser<P0: Parser, P1: Parser, P2: Parser, P3: Parser>: Pars
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
-            var stream: Stream.SubSequence = stream
+        return { stream, index in
+            var index: Stream.Index = index
             let o0: P0.Output
             let o1: P1.Output
             let o2: P2.Output
             let o3: P3.Output
             
-            switch p0.parse(stream) {
+            switch p0.parse(stream, index) {
             case .failure(let f0):
                 return .failure(.c0(f0))
             case .success(let x0):
-                (o0, stream) = x0
+                (o0, index) = x0
             }
-            switch p1.parse(stream) {
+            switch p1.parse(stream, index) {
             case .failure(let f1):
                 return .failure(.c1(f1))
             case .success(let x1):
-                (o1, stream) = x1
+                (o1, index) = x1
             }
-            switch p2.parse(stream) {
+            switch p2.parse(stream, index) {
             case .failure(let f2):
                 return .failure(.c2(f2))
             case .success(let s2):
-                (o2, stream) = s2
+                (o2, index) = s2
             }
-            switch p3.parse(stream) {
+            switch p3.parse(stream, index) {
             case .failure(let f3):
                 return .failure(.c3(f3))
             case .success(let s3):
-                (o3, stream) = s3
+                (o3, index) = s3
             }
             
-            return .success(((o0, o1, o2, o3), stream))
+            return .success(((o0, o1, o2, o3), index))
         }
     }
 }

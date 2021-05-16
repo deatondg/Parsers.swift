@@ -17,12 +17,12 @@ public struct MapFailableParser<P: Parser, MapOutput>: Parser {
     }
 
     public var parse: PrimitiveParser<Stream, MapOutput, Failure> {
-        return { stream in
-            switch p.parse(stream) {
+        return { stream, index in
+            switch p.parse(stream, index) {
             case .failure(let parseFailure):
                 return .failure(parseFailure)
-            case .success(let (parseOutput, stream)):
-                return .success((f(parseOutput), stream))
+            case .success(let (parseOutput, index)):
+                return .success((f(parseOutput), index))
             }
         }
     }

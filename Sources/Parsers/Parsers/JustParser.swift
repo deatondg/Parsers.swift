@@ -11,8 +11,8 @@ public struct JustParser<Stream: Collection, Output>: Parser {
     }
     
     public var parse: PrimitiveParser<Stream, Output, Never> {
-        return { stream, startIndex in
-            .success((v, startIndex))
+        return { stream, index in
+            .success((v, index))
         }
     }
 }

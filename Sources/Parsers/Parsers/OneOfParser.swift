@@ -10,14 +10,14 @@ public struct OneOf1Parser<P0: Parser>: Parser {
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
+        return { stream, index in
             let f0: P0.Failure
             
-            switch p0.parse(stream) {
+            switch p0.parse(stream, index) {
             case .failure(let _f0):
                 f0 = _f0
-            case .success(let (o0, stream)):
-                return .success((.c0(o0), stream))
+            case .success(let (o0, index)):
+                return .success((.c0(o0), index))
             }
             
             return .failure(.init(f0))
@@ -38,21 +38,21 @@ public struct OneOf2Parser<P0: Parser, P1: Parser>: Parser where P1.Stream == P0
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
+        return { stream, index in
             let f0: P0.Failure
             let f1: P1.Failure
             
-            switch p0.parse(stream) {
+            switch p0.parse(stream, index) {
             case .failure(let _f0):
                 f0 = _f0
-            case .success(let (o0, stream)):
-                return .success((.c0(o0), stream))
+            case .success(let (o0, index)):
+                return .success((.c0(o0), index))
             }
-            switch p1.parse(stream) {
+            switch p1.parse(stream, index) {
             case .failure(let _f1):
                 f1 = _f1
-            case .success(let (o1, stream)):
-                return .success((.c1(o1), stream))
+            case .success(let (o1, index)):
+                return .success((.c1(o1), index))
             }
             
             return .failure(.init(f0, f1))
@@ -75,28 +75,28 @@ public struct OneOf3Parser<P0: Parser, P1: Parser, P2: Parser>: Parser where P1.
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
+        return { stream, index in
             let f0: P0.Failure
             let f1: P1.Failure
             let f2: P2.Failure
             
-            switch p0.parse(stream) {
+            switch p0.parse(stream, index) {
             case .failure(let _f0):
                 f0 = _f0
-            case .success(let (o0, stream)):
-                return .success((.c0(o0), stream))
+            case .success(let (o0, index)):
+                return .success((.c0(o0), index))
             }
-            switch p1.parse(stream) {
+            switch p1.parse(stream, index) {
             case .failure(let _f1):
                 f1 = _f1
-            case .success(let (o1, stream)):
-                return .success((.c1(o1), stream))
+            case .success(let (o1, index)):
+                return .success((.c1(o1), index))
             }
-            switch p2.parse(stream) {
+            switch p2.parse(stream, index) {
             case .failure(let _f2):
                 f2 = _f2
-            case .success(let (o2, stream)):
-                return .success((.c2(o2), stream))
+            case .success(let (o2, index)):
+                return .success((.c2(o2), index))
             }
             
             return .failure(.init(f0, f1, f2))
@@ -121,35 +121,35 @@ public struct OneOf4Parser<P0: Parser, P1: Parser, P2: Parser, P3: Parser>: Pars
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
+        return { stream, index in
             let f0: P0.Failure
             let f1: P1.Failure
             let f2: P2.Failure
             let f3: P3.Failure
             
-            switch p0.parse(stream) {
+            switch p0.parse(stream, index) {
             case .failure(let _f0):
                 f0 = _f0
-            case .success(let (o0, stream)):
-                return .success((.c0(o0), stream))
+            case .success(let (o0, index)):
+                return .success((.c0(o0), index))
             }
-            switch p1.parse(stream) {
+            switch p1.parse(stream, index) {
             case .failure(let _f1):
                 f1 = _f1
-            case .success(let (o1, stream)):
-                return .success((.c1(o1), stream))
+            case .success(let (o1, index)):
+                return .success((.c1(o1), index))
             }
-            switch p2.parse(stream) {
+            switch p2.parse(stream, index) {
             case .failure(let _f2):
                 f2 = _f2
-            case .success(let (o2, stream)):
-                return .success((.c2(o2), stream))
+            case .success(let (o2, index)):
+                return .success((.c2(o2), index))
             }
-            switch p3.parse(stream) {
+            switch p3.parse(stream, index) {
             case .failure(let _f3):
                 f3 = _f3
-            case .success(let (o3, stream)):
-                return .success((.c3(o3), stream))
+            case .success(let (o3, index)):
+                return .success((.c3(o3), index))
             }
             
             return .failure(.init(f0, f1, f2, f3))

@@ -14,7 +14,7 @@ public struct RegularExpressionParser: Parser {
     }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
-        return { stream in
+        return { stream, startIndex in
             fatalError()
             //if let e.matches(in: <#T##String#>, options: <#T##NSRegularExpression.MatchingOptions#>, range: <#T##NSRange#>)
         }
