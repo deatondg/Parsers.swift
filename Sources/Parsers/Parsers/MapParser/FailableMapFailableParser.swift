@@ -15,10 +15,9 @@ public struct FailableMapFailableParser<P: Parser, MapOutput, MapFailure: Error>
     }
     public init(_ p: P, _ f: @escaping (P.Output) throws -> MapOutput) where MapFailure == Error {
         self.p = p
-        self.f = { parseOutput in
+        self.f = {
             do {
-                let mapOutput = try f(parseOutput)
-                return .success(mapOutput)
+                return .success(try f($0))
             } catch {
                 return .failure(error)
             }

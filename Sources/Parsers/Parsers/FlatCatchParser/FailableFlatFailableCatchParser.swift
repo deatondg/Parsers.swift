@@ -15,10 +15,9 @@ public struct FailableFlatFailableCatchParser<P: Parser, CatchParser: Parser, Ca
     }
     public init(_ p: P, _ c: @escaping (P.Failure) throws -> CatchParser) where CatchFailure == Error {
         self.p = p
-        self.c = { failure in
+        self.c = {
             do {
-                let catchParser = try c(failure)
-                return .success(catchParser)
+                return .success(try c($0))
             } catch {
                 return .failure(error)
             }
