@@ -29,6 +29,15 @@ public struct CatchParser<P: Parser, CatchFailure: Error>: Parser {
         self.c = { _ in .success(c) }
     }
     
+    public init(_ p: P, mapFailures f: @escaping (P.Failure) -> CatchFailure) {
+        self.p = p
+        self.c = { .failure(f($0)) }
+    }
+    public init(_ p: P, replaceFailures f: CatchFailure) {
+        self.p = p
+        self.c = { _ in .failure(f) }
+    }
+    
     public var parse: PrimitiveParser<Stream, Output, Failure> {
         return { stream in
             switch p.parse(stream) {
@@ -57,5 +66,13 @@ extension Parser {
     }
     func `catch`(_ c: Output) -> CatchParser<Self, Never> {
         .init(self, c)
+    }
+}
+extension Parser {
+    func mapFailures<CatchFailure: Error>(_ f: @escaping (Failure) -> CatchFailure) -> CatchParser<Self, CatchFailure> {
+        .init(self, mapFailures: f)
+    }
+    func replaceFailures<CatchFailure: Error>(_ f: CatchFailure) -> CatchParser<Self, CatchFailure> {
+        .init(self, replaceFailures: f)
     }
 }
