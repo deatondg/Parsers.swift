@@ -17,7 +17,11 @@ public struct AnyParser<Stream: Collection, Output, Failure: Error>: Parser {
 }
 
 public extension Parser {
-    func eraseToAnyParser() -> AnyParser<Stream, Output, Failure> {
-        .init(self)
+    func eraseToAnyParser(eager: Bool = false) -> AnyParser<Stream, Output, Failure> {
+        if eager {
+            return .init(eager: self)
+        } else {
+            return .init(self)
+        }
     }
 }
