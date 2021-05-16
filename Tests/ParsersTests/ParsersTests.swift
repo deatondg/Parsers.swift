@@ -16,7 +16,7 @@ final class ParsersTests: XCTestCase {
                     self
                 }
                 .map({ (_, inner, _, outer) in inner + 1 + outer })
-                .catch({ _ in Parsers.just(0) })
+                .catch(Parsers.just(0))
             }
         }
         
@@ -26,5 +26,10 @@ final class ParsersTests: XCTestCase {
         let result1 = dyckParser.parse(example1)
         XCTAssert(result1.0 == 4)
         XCTAssert(result1.1.isEmpty)
+        
+        let example2 = "())()"
+        let result2 = dyckParser.parse(example2)
+        XCTAssert(result2.0 == 1)
+        XCTAssert(result2.1.startIndex == example2.index(example2.startIndex, offsetBy: 3))
     }
 }

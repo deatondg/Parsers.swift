@@ -10,6 +10,10 @@ public struct FailableFlatCatchParser<P: Parser, CatchParser: Parser>: Parser wh
         self.p = p
         self.c = c
     }
+    public init(_ p: P, _ c: CatchParser) {
+        self.p = p
+        self.c = { _ in c }
+    }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
         return { stream in
@@ -29,6 +33,9 @@ public struct FailableFlatCatchParser<P: Parser, CatchParser: Parser>: Parser wh
 }
 extension Parser {
     func `catch`<CatchParser: Parser>(_ c: @escaping (Failure) -> CatchParser) -> FailableFlatCatchParser<Self, CatchParser> where CatchParser.Stream == Stream, CatchParser.Output == Output {
+        .init(self, c)
+    }
+    func `catch`<CatchParser: Parser>(_ c: CatchParser) -> FailableFlatCatchParser<Self, CatchParser> where CatchParser.Stream == Stream, CatchParser.Output == Output {
         .init(self, c)
     }
 }
