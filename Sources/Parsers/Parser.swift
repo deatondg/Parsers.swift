@@ -1,4 +1,4 @@
-public typealias PrimitiveParser<Stream: Collection, Output, Failure: Error> = (Stream.SubSequence) -> Result<(Output, Stream.SubSequence), Failure>
+public typealias PrimitiveParser<Stream: Collection, Output, Failure: Error> = (Stream, Stream.Index) -> Result<(Output, Stream.Index), Failure>
 
 public protocol Parser {
     associatedtype Stream: Collection
@@ -10,24 +10,17 @@ public protocol Parser {
 }
 
 extension Parser {
-    func parse(_ stream: Stream) -> Result<(Output, Stream.SubSequence), Failure> {
-        self.parse(stream[...])
+    func parse(_ stream: Stream) -> Result<(Output, Stream.Index), Failure> {
+        self.parse(stream, stream.startIndex)
     }
 }
 
 extension Parser where Failure == Never {
-    func parse(_ stream: Stream.SubSequence) -> (Output, Stream.SubSequence) {
-        switch self.parse(stream) {
+    func parse(_ stream: Stream) -> (Output, Stream.Index) {
+        switch self.parse(stream, stream.startIndex) {
         // Cannot fail
-        case .success(let (output, stream)):
-            return (output, stream)
-        }
-    }
-    func parse(_ stream: Stream) -> (Output, Stream.SubSequence) {
-        switch self.parse(stream[...]) {
-        // Cannot fail
-        case .success(let (output, stream)):
-            return (output, stream)
+        case .success(let (output, endIndex)):
+            return (output, endIndex)
         }
     }
 }
