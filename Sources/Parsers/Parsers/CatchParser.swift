@@ -33,7 +33,7 @@ public struct CatchParser<P: Parser, CatchFailure: Error>: Parser {
         self.p = p
         self.c = { .failure(f($0)) }
     }
-    public init(_ p: P, replaceFailures f: CatchFailure) {
+    public init(_ p: P, replaceFailuresWith f: CatchFailure) {
         self.p = p
         self.c = { _ in .failure(f) }
     }
@@ -72,7 +72,7 @@ extension Parser {
     func mapFailures<CatchFailure: Error>(_ f: @escaping (Failure) -> CatchFailure) -> CatchParser<Self, CatchFailure> {
         .init(self, mapFailures: f)
     }
-    func replaceFailures<CatchFailure: Error>(_ f: CatchFailure) -> CatchParser<Self, CatchFailure> {
-        .init(self, replaceFailures: f)
+    func replaceFailures<CatchFailure: Error>(with f: CatchFailure) -> CatchParser<Self, CatchFailure> {
+        .init(self, replaceFailuresWith: f)
     }
 }
