@@ -37,6 +37,10 @@ public struct CatchParser<P: Parser, CatchFailure: Error>: Parser {
         self.p = p
         self.c = { _ in .failure(f) }
     }
+    public init(assertNonfailing p: P, file: String = #file, function: String = #function, line: Int = #line) where CatchFailure == Never {
+        self.p = p
+        self.c = { fatalError("Parser.assertNonfailing() failed with \($0) in \(function) \(file):\(line).") }
+    }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
         return { stream in
@@ -74,5 +78,8 @@ extension Parser {
     }
     func replaceFailures<CatchFailure: Error>(with f: CatchFailure) -> CatchParser<Self, CatchFailure> {
         .init(self, replaceFailuresWith: f)
+    }
+    func assertNonfailing(file: String = #file, function: String = #function, line: Int = #line) -> CatchParser<Self, Never> {
+        .init(assertNonfailing: self, file: file, function: function, line: line)
     }
 }
