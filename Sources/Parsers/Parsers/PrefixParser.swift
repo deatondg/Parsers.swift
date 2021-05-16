@@ -21,10 +21,10 @@ public struct PrefixParser<Stream: Collection, PossiblePrefix: Collection>: Pars
     }
     
     public var parse: PrimitiveParser<Stream, Stream.SubSequence, Failure> {
-        return { stream in
-            if stream.starts(with: p) {
-                let endOfPrefix = stream.index(stream.startIndex, offsetBy: p.count)
-                return .success((stream[..<endOfPrefix], stream[endOfPrefix...]))
+        return { stream, startIndex in
+            if stream[startIndex...].starts(with: p) {
+                let endIndex = stream.index(startIndex, offsetBy: p.count)
+                return .success((stream[startIndex..<endIndex], endIndex))
             } else {
                 return .failure(.noMatch)
             }
