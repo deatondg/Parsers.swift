@@ -1,4 +1,4 @@
-public struct FailableFlatFailableCatchParser<P: Parser, CatchParser: Parser, CatchFailure: Error>: Parser where CatchParser.Stream == P.Stream, CatchParser.Output == P.Output {
+public struct FlatCatchParser<P: Parser, CatchParser: Parser, CatchFailure: Error>: Parser where CatchParser.Stream == P.Stream, CatchParser.Output == P.Output {
     public typealias Stream = P.Stream
     public typealias Output = P.Output
     public enum Failure: Error {
@@ -23,6 +23,14 @@ public struct FailableFlatFailableCatchParser<P: Parser, CatchParser: Parser, Ca
             }
         }
     }
+    public init(_ p: P, _ c: @escaping (P.Failure) -> CatchParser) where CatchFailure == Never {
+        self.p = p
+        self.c = { .success(c($0)) }
+    }
+    public init(_ p: P, _ c: CatchParser) {
+        self.p = p
+        self.c = { _ in .success(c) }
+    }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
         return { stream, index in
@@ -46,10 +54,16 @@ public struct FailableFlatFailableCatchParser<P: Parser, CatchParser: Parser, Ca
     }
 }
 extension Parser {
-    func `catch`<CatchParser: Parser, CatchFailure: Error>(_ c: @escaping (Failure) -> Result<CatchParser, CatchFailure>) -> FailableFlatFailableCatchParser<Self, CatchParser, CatchFailure> where CatchParser.Stream == Stream, CatchParser.Output == Output {
+    func `catch`<CatchParser: Parser, CatchFailure: Error>(_ c: @escaping (Failure) -> Result<CatchParser, CatchFailure>) -> FlatCatchParser<Self, CatchParser, CatchFailure> where CatchParser.Stream == Stream, CatchParser.Output == Output {
         .init(self, c)
     }
-    func `catch`<CatchParser: Parser>(_ c: @escaping (Failure) throws -> CatchParser) -> FailableFlatFailableCatchParser<Self, CatchParser, Error> where CatchParser.Stream == Stream, CatchParser.Output == Output {
+    func `catch`<CatchParser: Parser>(_ c: @escaping (Failure) throws -> CatchParser) -> FlatCatchParser<Self, CatchParser, Error> where CatchParser.Stream == Stream, CatchParser.Output == Output {
+        .init(self, c)
+    }
+    func `catch`<CatchParser: Parser>(_ c: @escaping (Failure) -> CatchParser) -> FlatCatchParser<Self, CatchParser, Never> where CatchParser.Stream == Stream, CatchParser.Output == Output {
+        .init(self, c)
+    }
+    func `catch`<CatchParser: Parser>(_ c: CatchParser) -> FlatCatchParser<Self, CatchParser, Never> where CatchParser.Stream == Stream, CatchParser.Output == Output {
         .init(self, c)
     }
 }

@@ -1,7 +1,10 @@
-public struct FailableFlattenParser<P: Parser>: Parser where P.Output: Parser, P.Output.Stream == P.Stream, P.Failure == Never {
+public struct FlattenParser<P: Parser>: Parser where P.Output: Parser, P.Output.Stream == P.Stream {
     public typealias Stream = P.Stream
     public typealias Output = P.Output.Output
-    public typealias Failure = P.Output.Failure
+    public enum Failure: Error {
+        case outerFailure(P.Failure)
+        case innerFailure(P.Output.Failure)
+    }
     
     private let p: P
     
@@ -12,11 +15,12 @@ public struct FailableFlattenParser<P: Parser>: Parser where P.Output: Parser, P
     public var parse: PrimitiveParser<Stream, Output, Failure> {
         return { stream, index in
             switch p.parse(stream, index) {
-            // Cannot fail
+            case .failure(let outerFailure):
+                return .failure(.outerFailure(outerFailure))
             case .success(let (outerOutput, index)):
                 switch outerOutput.parse(stream, index) {
                 case .failure(let innerFailure):
-                    return .failure(innerFailure)
+                    return .failure(.innerFailure(innerFailure))
                 case .success(let (innerOutput, index)):
                     return .success((innerOutput, index))
                 }
@@ -25,7 +29,7 @@ public struct FailableFlattenParser<P: Parser>: Parser where P.Output: Parser, P
     }
 }
 public extension Parser where Output: Parser, Output.Stream == Stream {
-    func flatten() -> FailableFlattenParser<Self> where Failure == Never {
+    func flatten() -> FlattenParser<Self> {
         .init(self)
     }
 }

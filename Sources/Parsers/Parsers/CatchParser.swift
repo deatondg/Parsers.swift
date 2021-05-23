@@ -68,15 +68,15 @@ extension Parser {
     func `catch`(_ c: @escaping (Failure) -> Output) -> CatchParser<Self, Never> {
         .init(self, c)
     }
-    func `catch`(_ c: Output) -> CatchParser<Self, Never> {
-        .init(self, c)
-    }
 }
 extension Parser {
+    func replaceFailures(withValue c: Output) -> CatchParser<Self, Never> {
+        .init(self, c)
+    }
     func mapFailures<CatchFailure: Error>(_ f: @escaping (Failure) -> CatchFailure) -> CatchParser<Self, CatchFailure> {
         .init(self, mapFailures: f)
     }
-    func replaceFailures<CatchFailure: Error>(with f: CatchFailure) -> CatchParser<Self, CatchFailure> {
+    func replaceFailures<CatchFailure: Error>(withFailure f: CatchFailure) -> CatchParser<Self, CatchFailure> {
         .init(self, replaceFailuresWith: f)
     }
     func assertNonfailing(file: String = #file, function: String = #function, line: Int = #line) -> CatchParser<Self, Never> {

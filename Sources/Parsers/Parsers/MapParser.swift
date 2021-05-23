@@ -1,4 +1,4 @@
-public struct FailableMapFailableParser<P: Parser, MapOutput, MapFailure: Error>: Parser {
+public struct MapParser<P: Parser, MapOutput, MapFailure: Error>: Parser {
     public typealias Stream = P.Stream
     public typealias Output = MapOutput
     public enum Failure: Error {
@@ -23,6 +23,14 @@ public struct FailableMapFailableParser<P: Parser, MapOutput, MapFailure: Error>
             }
         }
     }
+    public init(_ p: P, _ f: @escaping (P.Output) -> MapOutput) where MapFailure == Never {
+        self.p = p
+        self.f = { .success(f($0)) }
+    }
+    public init(_ p: P, replaceOutputsWith o: MapOutput) where MapFailure == Never {
+        self.p = p
+        self.f = { _ in .success(o) }
+    }
     
     public var parse: PrimitiveParser<Stream, MapOutput, Failure> {
         return { stream, index in
@@ -41,10 +49,21 @@ public struct FailableMapFailableParser<P: Parser, MapOutput, MapFailure: Error>
     }
 }
 public extension Parser {
-    func map<MapOutput, MapFailure: Error>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> FailableMapFailableParser<Self, MapOutput, MapFailure> {
+    func map<MapOutput, MapFailure: Error>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> MapParser<Self, MapOutput, MapFailure> {
         .init(self, f)
     }
-    func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> FailableMapFailableParser<Self, MapOutput, Error> {
+    func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> MapParser<Self, MapOutput, Error> {
         .init(self, f)
+    }
+    func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> MapParser<Self, MapOutput, Never> {
+        .init(self, f)
+    }
+}
+public extension Parser {
+    func replaceOutputs<MapOutput>(with o: MapOutput) -> MapParser<Self, MapOutput, Never> {
+        .init(self, replaceOutputsWith: o)
+    }
+    func ignoreOutputs() -> MapParser<Self, (), Never> {
+        .init(self, replaceOutputsWith: ())
     }
 }
