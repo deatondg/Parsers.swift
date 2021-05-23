@@ -16,7 +16,7 @@ final class ParsersTests: XCTestCase {
                     self
                 }
                 .map({ (_, inner, _, outer) in inner + 1 + outer })
-                .catch(0)
+                .replaceFailures(withValue: 0)
             }
         }
         

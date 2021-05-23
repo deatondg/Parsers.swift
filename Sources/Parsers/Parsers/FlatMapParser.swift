@@ -1,4 +1,4 @@
-public struct FailableFlatFailableMapFailableParser<P: Parser, MapParser: Parser, MapFailure: Error>: Parser where MapParser.Stream == P.Stream {
+public struct FlatMapParser<P: Parser, MapParser: Parser, MapFailure: Error>: Parser where MapParser.Stream == P.Stream {
     public typealias Stream = P.Stream
     public typealias Output = MapParser.Output
     public enum Failure: Error {
@@ -24,6 +24,10 @@ public struct FailableFlatFailableMapFailableParser<P: Parser, MapParser: Parser
             }
         }
     }
+    public init(_ p: P, _ f: @escaping (P.Output) -> MapParser) where MapFailure == Never {
+        self.p = p
+        self.f = { return .success(f($0)) }
+    }
     
     public var parse: PrimitiveParser<Stream, Output, Failure> {
         return { stream, index in
@@ -48,10 +52,13 @@ public struct FailableFlatFailableMapFailableParser<P: Parser, MapParser: Parser
     }
 }
 extension Parser {
-    func flatMap<MapParser: Parser, MapFailure: Error>(_ f: @escaping (Output) -> Result<MapParser, MapFailure>) -> FailableFlatFailableMapFailableParser<Self, MapParser, MapFailure> where MapParser.Stream == Stream {
+    func flatMap<MapParser: Parser, MapFailure: Error>(_ f: @escaping (Output) -> Result<MapParser, MapFailure>) -> FlatMapParser<Self, MapParser, MapFailure> where MapParser.Stream == Stream {
         .init(self, f)
     }
-    func flatMap<MapParser: Parser>(_ f: @escaping (Output) throws -> MapParser) -> FailableFlatFailableMapFailableParser<Self, MapParser, Error> where MapParser.Stream == Stream {
+    func flatMap<MapParser: Parser>(_ f: @escaping (Output) throws -> MapParser) -> FlatMapParser<Self, MapParser, Error> where MapParser.Stream == Stream {
+        .init(self, f)
+    }
+    func flatMap<MapParser: Parser>(_ f: @escaping (Output) -> MapParser) -> FlatMapParser<Self, MapParser, Never> where MapParser.Stream == Stream {
         .init(self, f)
     }
 }
