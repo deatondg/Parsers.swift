@@ -51,7 +51,7 @@ public struct FlatMapParser<P: Parser, MapParser: Parser, MapFailure: Error>: Pa
         }
     }
 }
-extension Parser {
+public extension Parser {
     func flatMap<MapParser: Parser, MapFailure: Error>(_ f: @escaping (Output) -> Result<MapParser, MapFailure>) -> FlatMapParser<Self, MapParser, MapFailure> where MapParser.Stream == Stream {
         .init(self, f)
     }

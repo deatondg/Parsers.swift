@@ -9,7 +9,7 @@ public protocol Parser {
     var parse: PrimitiveParser<Stream, Output, Failure> { get }
 }
 
-extension Parser {
+public extension Parser {
     func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), Failure> {
         self.parse(stream, index).map({ $0 })
     }

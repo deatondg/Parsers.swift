@@ -157,19 +157,19 @@ public struct OneOf4Parser<P0: Parser, P1: Parser, P2: Parser, P3: Parser>: Pars
     }
 }
 
-func OneOf<P0: Parser>(@ParserBuilder ps: () -> P0) -> OneOf1Parser<P0> {
+public func OneOf<P0: Parser>(@ParserBuilder ps: () -> P0) -> OneOf1Parser<P0> {
     let ps = ps()
     return .init(ps)
 }
-func OneOf<P0: Parser, P1: Parser>(@ParserBuilder ps: () -> (P0, P1)) -> OneOf2Parser<P0, P1> where P1.Stream == P0.Stream {
+public func OneOf<P0: Parser, P1: Parser>(@ParserBuilder ps: () -> (P0, P1)) -> OneOf2Parser<P0, P1> where P1.Stream == P0.Stream {
     let ps = ps()
     return .init(ps.0, ps.1)
 }
-func OneOf<P0: Parser, P1: Parser, P2: Parser>(@ParserBuilder ps: () -> (P0, P1, P2)) -> OneOf3Parser<P0, P1, P2> where P1.Stream == P0.Stream/*, P2.Stream == P0.Stream*/ {
+public func OneOf<P0: Parser, P1: Parser, P2: Parser>(@ParserBuilder ps: () -> (P0, P1, P2)) -> OneOf3Parser<P0, P1, P2> where P1.Stream == P0.Stream/*, P2.Stream == P0.Stream*/ {
     let ps = ps()
     return .init(ps.0, ps.1, ps.2)
 }
-func OneOf<P0: Parser, P1: Parser, P2: Parser, P3: Parser>(@ParserBuilder ps: () -> (P0, P1, P2, P3)) -> OneOf4Parser<P0, P1, P2, P3> where P1.Stream == P0.Stream/*, P2.Stream == P0.Stream, P3.Stream == P0.Stream*/ {
+public func OneOf<P0: Parser, P1: Parser, P2: Parser, P3: Parser>(@ParserBuilder ps: () -> (P0, P1, P2, P3)) -> OneOf4Parser<P0, P1, P2, P3> where P1.Stream == P0.Stream/*, P2.Stream == P0.Stream, P3.Stream == P0.Stream*/ {
     let ps = ps()
     return .init(ps.0, ps.1, ps.2, ps.3)
 }

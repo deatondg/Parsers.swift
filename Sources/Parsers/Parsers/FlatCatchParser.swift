@@ -53,7 +53,7 @@ public struct FlatCatchParser<P: Parser, CatchParser: Parser, CatchFailure: Erro
         }
     }
 }
-extension Parser {
+public extension Parser {
     func `catch`<CatchParser: Parser, CatchFailure: Error>(_ c: @escaping (Failure) -> Result<CatchParser, CatchFailure>) -> FlatCatchParser<Self, CatchParser, CatchFailure> where CatchParser.Stream == Stream, CatchParser.Output == Output {
         .init(self, c)
     }

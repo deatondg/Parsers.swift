@@ -36,3 +36,6 @@ public struct RepeatParser<P: Parser>: Parser {
         }
     }
 }
+public extension Parser {
+    func `repeat`() -> RepeatParser<Self> { .init(self) }
+}

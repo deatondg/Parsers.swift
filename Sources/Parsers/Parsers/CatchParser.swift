@@ -58,7 +58,7 @@ public struct CatchParser<P: Parser, CatchFailure: Error>: Parser {
         }
     }
 }
-extension Parser {
+public extension Parser {
     func `catch`<CatchFailure: Error>(_ c: @escaping (Failure) -> Result<Output, CatchFailure>) -> CatchParser<Self, CatchFailure> {
         .init(self, c)
     }
@@ -69,7 +69,7 @@ extension Parser {
         .init(self, c)
     }
 }
-extension Parser {
+public extension Parser {
     func replaceFailures(withValue c: Output) -> CatchParser<Self, Never> {
         .init(self, c)
     }

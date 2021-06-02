@@ -161,19 +161,19 @@ public struct AllOf4Parser<P0: Parser, P1: Parser, P2: Parser, P3: Parser>: Pars
     }
 }
 
-func AllOf<P0: Parser>(@ParserBuilder ps: () -> P0) -> AllOf1Parser<P0> {
+public func AllOf<P0: Parser>(@ParserBuilder ps: () -> P0) -> AllOf1Parser<P0> {
     let ps = ps()
     return .init(ps)
 }
-func AllOf<P0: Parser, P1: Parser>(@ParserBuilder ps: () -> (P0, P1)) -> AllOf2Parser<P0, P1> where P1.Stream == P0.Stream {
+public func AllOf<P0: Parser, P1: Parser>(@ParserBuilder ps: () -> (P0, P1)) -> AllOf2Parser<P0, P1> where P1.Stream == P0.Stream {
     let ps = ps()
     return .init(ps.0, ps.1)
 }
-func AllOf<P0: Parser, P1: Parser, P2: Parser>(@ParserBuilder ps: () -> (P0, P1, P2)) -> AllOf3Parser<P0, P1, P2> where P1.Stream == P0.Stream/*, P2.Stream == P0.Stream*/ {
+public func AllOf<P0: Parser, P1: Parser, P2: Parser>(@ParserBuilder ps: () -> (P0, P1, P2)) -> AllOf3Parser<P0, P1, P2> where P1.Stream == P0.Stream/*, P2.Stream == P0.Stream*/ {
     let ps = ps()
     return .init(ps.0, ps.1, ps.2)
 }
-func AllOf<P0: Parser, P1: Parser, P2: Parser, P3: Parser>(@ParserBuilder ps: () -> (P0, P1, P2, P3)) -> AllOf4Parser<P0, P1, P2, P3> where P1.Stream == P0.Stream/*, P2.Stream == P0.Stream, P3.Stream == P0.Stream*/ {
+public func AllOf<P0: Parser, P1: Parser, P2: Parser, P3: Parser>(@ParserBuilder ps: () -> (P0, P1, P2, P3)) -> AllOf4Parser<P0, P1, P2, P3> where P1.Stream == P0.Stream/*, P2.Stream == P0.Stream, P3.Stream == P0.Stream*/ {
     let ps = ps()
     return .init(ps.0, ps.1, ps.2, ps.3)
 }

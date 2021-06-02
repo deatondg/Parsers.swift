@@ -22,7 +22,7 @@ extension OneOf2: Error where T0: Error, T1: Error {}
 extension OneOf3: Error where T0: Error, T1: Error, T2: Error {}
 extension OneOf4: Error where T0: Error, T1: Error, T2: Error, T3: Error {}
 
-extension OneOf1 {
+public extension OneOf1 {
     func ignoreCases() -> T0 {
         switch self {
         case .c0(let v):
@@ -30,7 +30,7 @@ extension OneOf1 {
         }
     }
 }
-extension OneOf2 where T1 == T0 {
+public extension OneOf2 where T1 == T0 {
     func ignoreCases() -> T0 {
         switch self {
         case .c0(let v),
@@ -39,7 +39,7 @@ extension OneOf2 where T1 == T0 {
         }
     }
 }
-extension OneOf3 where T1 == T0, T2 == T0 {
+public extension OneOf3 where T1 == T0, T2 == T0 {
     func ignoreCases() -> T0 {
         switch self {
         case .c0(let v),
@@ -49,7 +49,7 @@ extension OneOf3 where T1 == T0, T2 == T0 {
         }
     }
 }
-extension OneOf4 where T1 == T0, T2 == T0, T3 == T0 {
+public extension OneOf4 where T1 == T0, T2 == T0, T3 == T0 {
     func ignoreCases() -> T0 {
         switch self {
         case .c0(let v),
