@@ -124,7 +124,7 @@ public extension NSRegularExpression {
 public struct RegularExpressionPrefixParser: Parser {
     public typealias Stream = String
     public typealias Output = RegularExpressionMatch
-    public typealias Failure = NoMatchError
+    public typealias Failure = NoMatchFailure
     
     private let e: NSRegularExpression
     
@@ -132,7 +132,7 @@ public struct RegularExpressionPrefixParser: Parser {
         self.e = e
     }
     
-    public var parse: PrimitiveParser<String, RegularExpressionMatch, NoMatchError> {
+    public var parse: PrimitiveParser<String, RegularExpressionMatch, NoMatchFailure> {
         return { (string, startIndex) in
             guard let match = e.firstMatch(in: string, options: .anchored, range: startIndex...) else {
                 return .failure(.noMatch)
@@ -145,7 +145,7 @@ public struct RegularExpressionPrefixParser: Parser {
 public struct RegularExpressionNextMatchParser: Parser {
     public typealias Stream = String
     public typealias Output = (prefix: Substring, match: RegularExpressionMatch)
-    public typealias Failure = NoMatchError
+    public typealias Failure = NoMatchFailure
     
     private let e: NSRegularExpression
     
@@ -153,7 +153,7 @@ public struct RegularExpressionNextMatchParser: Parser {
         self.e = e
     }
     
-    public var parse: PrimitiveParser<String, (prefix: Substring, match: RegularExpressionMatch), NoMatchError> {
+    public var parse: PrimitiveParser<String, (prefix: Substring, match: RegularExpressionMatch), NoMatchFailure> {
         return { (string, startIndex) in
             guard let match = e.firstMatch(in: string, options: [], range: startIndex...) else {
                 return .failure(.noMatch)
