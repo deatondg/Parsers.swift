@@ -1,9 +1,7 @@
 public struct PrefixParser<Stream: Collection, PossiblePrefix: Collection>: Parser where Stream.Element: Equatable, PossiblePrefix.Element == Stream.Element {
     
     public typealias Output = Stream.SubSequence
-    public enum Failure: Error {
-        case noMatch
-    }
+    public typealias Failure = NoMatchError
     
     private let p: PossiblePrefix
     
