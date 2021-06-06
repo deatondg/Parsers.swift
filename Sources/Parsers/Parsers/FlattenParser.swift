@@ -1,4 +1,4 @@
-public enum FlattenParserError<OuterFailure: Error, InnerFailure: Error>: Error {
+@frozen public enum FlattenParserError<OuterFailure: Error, InnerFailure: Error>: Error {
     case outerFailure(OuterFailure)
     case innerFailure(InnerFailure)
 }

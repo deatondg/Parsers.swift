@@ -1,16 +1,16 @@
-public enum OneOf1<T0> {
+@frozen public enum OneOf1<T0> {
     case c0(T0)
 }
-public enum OneOf2<T0, T1> {
+@frozen public enum OneOf2<T0, T1> {
     case c0(T0)
     case c1(T1)
 }
-public enum OneOf3<T0, T1, T2> {
+@frozen public enum OneOf3<T0, T1, T2> {
     case c0(T0)
     case c1(T1)
     case c2(T2)
 }
-public enum OneOf4<T0, T1, T2, T3> {
+@frozen public enum OneOf4<T0, T1, T2, T3> {
     case c0(T0)
     case c1(T1)
     case c2(T2)

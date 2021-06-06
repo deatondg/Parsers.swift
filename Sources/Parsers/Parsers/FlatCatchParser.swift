@@ -1,4 +1,4 @@
-public enum FlatCatchParserError<CatchFailure: Error, ParseFailure: Error>: Error {
+@frozen public enum FlatCatchParserError<CatchFailure: Error, ParseFailure: Error>: Error {
     case catchFailure(CatchFailure)
     case parseFailure(ParseFailure)
 }

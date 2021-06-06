@@ -1,4 +1,4 @@
-public enum FlatMapParserFailure<OuterFailure: Error, MapFailure: Error, InnerFailure: Error>: Error {
+@frozen public enum FlatMapParserFailure<OuterFailure: Error, MapFailure: Error, InnerFailure: Error>: Error {
     case outerFailure(OuterFailure)
     case mapFailure(MapFailure)
     case innerFailure(InnerFailure)

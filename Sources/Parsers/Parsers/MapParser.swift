@@ -1,4 +1,4 @@
-public enum MapParserFailure<ParseFailure: Error, MapFailure: Error>: Error {
+@frozen public enum MapParserFailure<ParseFailure: Error, MapFailure: Error>: Error {
     case parseFailure(ParseFailure)
     case mapFailure(MapFailure)
 }

@@ -1,5 +1,5 @@
 @resultBuilder
-public enum ParserBuilder {
+@frozen public enum ParserBuilder {
     public static func buildBlock<P: Parser>(_ p: P) -> PrimitiveParser<P.Stream, P.Output, P.Failure> {
         p.parse
     }

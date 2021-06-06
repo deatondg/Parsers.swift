@@ -28,4 +28,4 @@ public extension Parser {
     }
 }
 
-public enum Parsers {}
+@frozen public enum Parsers {}
