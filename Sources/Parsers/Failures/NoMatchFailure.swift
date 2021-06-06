@@ -1,3 +1,4 @@
-@frozen public enum NoMatchFailure: Error {
+@frozen
+public enum NoMatchFailure: Error {
     case noMatch
 }

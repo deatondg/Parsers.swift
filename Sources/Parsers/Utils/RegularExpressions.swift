@@ -63,7 +63,7 @@ public extension NSRegularExpression {
         self.numberOfMatches(in: string, options: options, range: NSRange(range, in: string))
     }
     
-    func enumetateMatches<R: RangeExpression>(
+    func enumerateMatches<R: RangeExpression>(
         in string: String,
         options: NSRegularExpression.MatchingOptions,
         range: R,
@@ -77,7 +77,7 @@ public extension NSRegularExpression {
             }
         })
     }
-    func enumetateMatches(
+    func enumerateMatches(
         in string: String,
         options: NSRegularExpression.MatchingOptions,
         range: UnboundedRange,
@@ -119,51 +119,4 @@ public extension NSRegularExpression {
     func stringByReplacingMatches(in string: String, options: NSRegularExpression.MatchingOptions, range: UnboundedRange, withTemplate template: String) -> String {
         self.stringByReplacingMatches(in: string, options: options, range: NSRange(range, in: string), withTemplate: template)
     }
-}
-
-public struct RegularExpressionPrefixParser: Parser {
-    public typealias Stream = String
-    public typealias Output = RegularExpressionMatch
-    public typealias Failure = NoMatchFailure
-    
-    private let e: NSRegularExpression
-    
-    public init(_ e: NSRegularExpression) {
-        self.e = e
-    }
-    
-    public var parse: PrimitiveParser<String, RegularExpressionMatch, NoMatchFailure> {
-        return { (string, startIndex) in
-            guard let match = e.firstMatch(in: string, options: .anchored, range: startIndex...) else {
-                return .failure(.noMatch)
-            }
-            return .success((match, match.range.upperBound))
-        }
-    }
-}
-
-public struct RegularExpressionNextMatchParser: Parser {
-    public typealias Stream = String
-    public typealias Output = (prefix: Substring, match: RegularExpressionMatch)
-    public typealias Failure = NoMatchFailure
-    
-    private let e: NSRegularExpression
-    
-    public init(_ e: NSRegularExpression) {
-        self.e = e
-    }
-    
-    public var parse: PrimitiveParser<String, (prefix: Substring, match: RegularExpressionMatch), NoMatchFailure> {
-        return { (string, startIndex) in
-            guard let match = e.firstMatch(in: string, options: [], range: startIndex...) else {
-                return .failure(.noMatch)
-            }
-            return .success(( (string[startIndex..<match.range.lowerBound], match), match.range.upperBound ))
-        }
-    }
-}
-
-public extension NSRegularExpression {
-    func prefixParser() -> RegularExpressionPrefixParser { .init(self) }
-    func nextMatchParser() -> RegularExpressionNextMatchParser { .init(self) }
 }
