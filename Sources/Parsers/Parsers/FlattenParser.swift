@@ -1,10 +1,11 @@
+public enum FlattenParserError<OuterFailure: Error, InnerFailure: Error>: Error {
+    case outerFailure(OuterFailure)
+    case innerFailure(InnerFailure)
+}
 public struct FlattenParser<P: Parser>: Parser where P.Output: Parser, P.Output.Stream == P.Stream {
     public typealias Stream = P.Stream
     public typealias Output = P.Output.Output
-    public enum Failure: Error {
-        case outerFailure(P.Failure)
-        case innerFailure(P.Output.Failure)
-    }
+    public typealias Failure = FlattenParserError<P.Failure, P.Output.Failure>
     
     private let p: P
     

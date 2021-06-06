@@ -1,10 +1,11 @@
+public enum FlatCatchParserError<CatchFailure: Error, ParseFailure: Error>: Error {
+    case catchFailure(CatchFailure)
+    case parseFailure(ParseFailure)
+}
 public struct FlatCatchParser<P: Parser, CatchParser: Parser, CatchFailure: Error>: Parser where CatchParser.Stream == P.Stream, CatchParser.Output == P.Output {
     public typealias Stream = P.Stream
     public typealias Output = P.Output
-    public enum Failure: Error {
-        case catchFailure(CatchFailure)
-        case parseFailure(CatchParser.Failure)
-    }
+    public typealias Failure = FlatCatchParserError<CatchFailure, CatchParser.Failure>
     
     private let p: P
     private let c: (P.Failure) -> Result<CatchParser, CatchFailure>

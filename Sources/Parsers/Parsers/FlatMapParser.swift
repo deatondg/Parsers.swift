@@ -1,11 +1,12 @@
+public enum FlatMapParserFailure<OuterFailure: Error, MapFailure: Error, InnerFailure: Error>: Error {
+    case outerFailure(OuterFailure)
+    case mapFailure(MapFailure)
+    case innerFailure(InnerFailure)
+}
 public struct FlatMapParser<P: Parser, MapParser: Parser, MapFailure: Error>: Parser where MapParser.Stream == P.Stream {
     public typealias Stream = P.Stream
     public typealias Output = MapParser.Output
-    public enum Failure: Error {
-        case outerFailure(P.Failure)
-        case mapFailure(MapFailure)
-        case innerFailure(MapParser.Failure)
-    }
+    public typealias Failure = FlatMapParserFailure<P.Failure, MapFailure, MapParser.Failure>
     
     private let p: P
     private let f: (P.Output) -> Result<MapParser, MapFailure>
