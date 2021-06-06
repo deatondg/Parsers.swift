@@ -1,4 +1,4 @@
-public struct RemainerParser<Stream: Collection>: Parser {
+public struct RemainderParser<Stream: Collection>: Parser {
     public typealias Output = Stream.SubSequence
     public typealias Failure = Never
     
