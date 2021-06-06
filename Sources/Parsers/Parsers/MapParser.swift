@@ -1,11 +1,11 @@
-public enum MapParserError<ParseFailure: Error, MapFailure: Error>: Error {
+public enum MapParserFailure<ParseFailure: Error, MapFailure: Error>: Error {
     case parseFailure(ParseFailure)
     case mapFailure(MapFailure)
 }
 public struct MapParser<P: Parser, MapOutput, MapFailure: Error>: Parser {
     public typealias Stream = P.Stream
     public typealias Output = MapOutput
-    public typealias Failure = MapParserError<P.Failure, MapFailure>
+    public typealias Failure = MapParserFailure<P.Failure, MapFailure>
     
     private let p: P
     private let f: (P.Output) -> Result<MapOutput, MapFailure>
