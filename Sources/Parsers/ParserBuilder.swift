@@ -1,6 +1,9 @@
 @resultBuilder
 @frozen
 public enum ParserBuilder {
+    public static func buildExpression<Stream: Collection, Output, Failure: Error>(_ p: Parser<Stream, Output, Failure>) -> Parser<Stream, Output, Failure> {
+        p
+    }
     public static func buildExpression<P: ParserProtocol>(_ p: P) -> Parser<P.Stream, P.Output, P.Failure> {
         p.parser
     }
