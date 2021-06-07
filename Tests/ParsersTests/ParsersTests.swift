@@ -10,9 +10,9 @@ final class ParsersTests: XCTestCase {
 
             var parser: Parser<Int, Never> {
                 AllOf {
-                    Parsers.prefix("(")
+                    "("
                     self
-                    Parsers.prefix(")")
+                    ")"
                     self
                 }
                 .map({ (_, inner, _, outer) in inner + 1 + outer })
