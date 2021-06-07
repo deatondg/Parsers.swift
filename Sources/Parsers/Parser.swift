@@ -1,80 +1,78 @@
-public typealias PrimitiveParser<Stream: Collection, Output, Failure: Error> = (Stream, Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), Failure>
+public typealias PrimitiveParser<Output, Failure: Error> = (String, String.Index) -> Result<(value: Output, endIndex: String.Index), Failure>
 
-public struct Parser<Stream: Collection, Output, Failure: Error>: ParserProtocol {
-    private let primitiveParser: PrimitiveParser<Stream, Output, Failure>
+public struct Parser<Output, Failure: Error>: ParserProtocol {
+    private let primitiveParser: PrimitiveParser<Output, Failure>
     
-    public func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), Failure> {
-        self.primitiveParser(stream, index)
+    public func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure> {
+        self.primitiveParser(string, index)
     }
-    public var parser: Parser<Stream, Output, Failure> { self }
+    public var parser: Parser<Output, Failure> { self }
     
-    init(__primitiveParser: @escaping PrimitiveParser<Stream, Output, Failure>) {
+    init(__primitiveParser: @escaping PrimitiveParser<Output, Failure>) {
         self.primitiveParser = __primitiveParser
     }
-    
-    public init<P: ParserProtocol>(_ parser: P) where P.Stream == Stream, P.Output == Output, P.Failure == Failure {
+    /*
+    public init<P: ParserProtocol>(_ parser: P) where P.Output == Output, P.Failure == Failure {
         self.primitiveParser = parser.parse
     }
-    /*
-    public init(_ parse: @autoclosure @escaping () -> PrimitiveParser<Stream, Output, Failure>) {
-        self.parse = { stream, index in parse()(stream, index) }
+    public init(_ parse: @autoclosure @escaping () -> PrimitiveParser<String, Output, Failure>) {
+        self.parse = { string, index in parse()(string, index) }
     }
-    public init(eager parse: @escaping PrimitiveParser<Stream, Output, Failure>) {
+    public init(eager parse: @escaping PrimitiveParser<String, Output, Failure>) {
         self.parse = parse
     }
     
-    public init<P: Parser>(_ p: P) where P.Stream == Stream, P.Output == Output, P.Failure == Failure {
-        self.parse = { stream, index in p.parse(stream, index) }
+    public init<P: Parser>(_ p: P) where P.String == String, P.Output == Output, P.Failure == Failure {
+        self.parse = { string, index in p.parse(string, index) }
     }
-    public init<P: Parser>(eager p: P) where P.Stream == Stream, P.Output == Output, P.Failure == Failure {
+    public init<P: Parser>(eager p: P) where P.String == String, P.Output == Output, P.Failure == Failure {
         self.parse = p.parse
     }
     */
 }
 
-@dynamicMemberLookup
+//@dynamicMemberLookup
 public protocol ParserProtocol {
-    associatedtype Stream: Collection
     associatedtype Output
     associatedtype Failure: Error
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), Failure>
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure>
     
     @ParserBuilder
-    var parser: Parser<Stream, Output, Failure> { get }
+    var parser: Parser<Output, Failure> { get }
     
-    subscript<T>(dynamicMember dynamicMember: KeyPath<Parser<Stream, Output, Failure>, T>) -> T { get }
+//    subscript<T>(dynamicMember dynamicMember: KeyPath<Parser<Output, Failure>, T>) -> T { get }
 }
 public extension ParserProtocol {
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), Failure> {
-        self.parser.parse(from: stream, startingAt: index)
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure> {
+        self.parser.parse(from: string, startingAt: index)
     }
     
-    var parser: Parser<Stream, Output, Failure> {
+    var parser: Parser<Output, Failure> {
         Parser(__primitiveParser: self.parse)
     }
     
-    subscript<T>(dynamicMember keyPath: KeyPath<Parser<Stream, Output, Failure>, T>) -> T {
-        self.parser[keyPath: keyPath]
-    }
+//    subscript<T>(dynamicMember keyPath: KeyPath<Parser<Output, Failure>, T>) -> T {
+//        self.parser[keyPath: keyPath]
+//    }
 }
 public extension ParserProtocol {
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> (value: Output, endIndex: Stream.Index) where Failure == Never {
-        self.parse(from: stream, startingAt: index).get()
+    func parse(from string: String, startingAt index: String.Index) -> (value: Output, endIndex: String.Index) where Failure == Never {
+        self.parse(from: string, startingAt: index).get()
     }
-    func parse(from stream: Stream, startingAt index: Stream.Index) throws -> (value: Output, endIndex: Stream.Index) {
-        try self.parse(from: stream, startingAt: index).get()
+    func parse(from string: String, startingAt index: String.Index) throws -> (value: Output, endIndex: String.Index) {
+        try self.parse(from: string, startingAt: index).get()
     }
 }
 
 public extension ParserProtocol {
-    func parse(from stream: Stream) -> Result<(value: Output, endIndex: Stream.Index), Failure> {
-        self.parse(from: stream, startingAt: stream.startIndex)
+    func parse(from string: String) -> Result<(value: Output, endIndex: String.Index), Failure> {
+        self.parse(from: string, startingAt: string.startIndex)
     }
-    func parse(from stream: Stream) -> (value: Output, endIndex: Stream.Index) where Failure == Never {
-        self.parse(from: stream).get()
+    func parse(from string: String) -> (value: Output, endIndex: String.Index) where Failure == Never {
+        self.parse(from: string).get()
     }
-    func parse(from stream: Stream) throws -> (value: Output, endIndex: Stream.Index) {
-        try self.parse(from: stream).get()
+    func parse(from string: String) throws -> (value: Output, endIndex: String.Index) {
+        try self.parse(from: string).get()
     }
 }

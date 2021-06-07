@@ -4,22 +4,22 @@ public enum FlattenParserFailure<OuterFailure: Error, InnerFailure: Error>: Erro
     case innerFailure(InnerFailure)
 }
 
-struct FFlattenFParser<Stream, OuterOutput, OuterFailure: Error>: ParserProtocol where OuterOutput: ParserProtocol, OuterOutput.Stream == Stream {
+struct FFlattenFParser<OuterOutput, OuterFailure: Error>: ParserProtocol where OuterOutput: ParserProtocol {
     typealias Output = OuterOutput.Output
     typealias Failure = FlattenParserFailure<OuterFailure, OuterOutput.Failure>
     
-    let p: Parser<Stream, OuterOutput, OuterFailure>
+    let p: Parser< OuterOutput, OuterFailure>
     
-    init(_ p: Parser<Stream, OuterOutput, OuterFailure>) {
+    init(_ p: Parser<OuterOutput, OuterFailure>) {
         self.p = p
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: OuterOutput.Output, endIndex: Stream.Index), FlattenParserFailure<OuterFailure, OuterOutput.Failure>> {
-        switch p.parse(from: stream, startingAt: index) {
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: OuterOutput.Output, endIndex: String.Index), FlattenParserFailure<OuterFailure, OuterOutput.Failure>> {
+        switch p.parse(from: string, startingAt: index) {
         case .failure(let outerFailure):
             return .failure(.outerFailure(outerFailure))
         case .success(let (outerOutput, index)):
-            switch outerOutput.parse(from: stream, startingAt: index) {
+            switch outerOutput.parse(from: string, startingAt: index) {
             case .failure(let innerFailure):
                 return .failure(.innerFailure(innerFailure))
             case .success(let (innerOutput, index)):
@@ -29,39 +29,39 @@ struct FFlattenFParser<Stream, OuterOutput, OuterFailure: Error>: ParserProtocol
     }
 }
 
-struct FlattenFParser<Stream, OuterOutput, OuterFailure: Error>: ParserProtocol where OuterOutput: ParserProtocol, OuterOutput.Stream == Stream, OuterOutput.Failure == Never {
+struct FlattenFParser<OuterOutput, OuterFailure: Error>: ParserProtocol where OuterOutput: ParserProtocol, OuterOutput.Failure == Never {
     typealias Output = OuterOutput.Output
     typealias Failure = OuterFailure
     
-    let p: Parser<Stream, OuterOutput, OuterFailure>
+    let p: Parser<OuterOutput, OuterFailure>
     
-    init(_ p: Parser<Stream, OuterOutput, OuterFailure>) {
+    init(_ p: Parser<OuterOutput, OuterFailure>) {
         self.p = p
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: OuterOutput.Output, endIndex: Stream.Index), OuterFailure> {
-        switch p.parse(from: stream, startingAt: index) {
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: OuterOutput.Output, endIndex: String.Index), OuterFailure> {
+        switch p.parse(from: string, startingAt: index) {
         case .failure(let outerFailure):
             return .failure(outerFailure)
         case .success(let (outerOutput, index)):
-            return .success(outerOutput.parse(from: stream, startingAt: index))
+            return .success(outerOutput.parse(from: string, startingAt: index))
         }
     }
 }
 
-struct FFlattenParser<Stream, OuterOutput>: ParserProtocol where OuterOutput: ParserProtocol, OuterOutput.Stream == Stream {
+struct FFlattenParser<OuterOutput>: ParserProtocol where OuterOutput: ParserProtocol {
     typealias Output = OuterOutput.Output
     typealias Failure = OuterOutput.Failure
     
-    let p: Parser<Stream, OuterOutput, Never>
+    let p: Parser<OuterOutput, Never>
     
-    init(_ p: Parser<Stream, OuterOutput, Never>) {
+    init(_ p: Parser<OuterOutput, Never>) {
         self.p = p
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: OuterOutput.Output, endIndex: Stream.Index), OuterOutput.Failure> {
-        let (outerOutput, index) = p.parse(from: stream, startingAt: index)
-        switch outerOutput.parse(from: stream, startingAt: index) {
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: OuterOutput.Output, endIndex: String.Index), OuterOutput.Failure> {
+        let (outerOutput, index) = p.parse(from: string, startingAt: index)
+        switch outerOutput.parse(from: string, startingAt: index) {
         case .failure(let innerFailure):
             return .failure(innerFailure)
         case .success(let (innerOutput, index)):
@@ -70,33 +70,33 @@ struct FFlattenParser<Stream, OuterOutput>: ParserProtocol where OuterOutput: Pa
     }
 }
 
-struct FlattenParser<Stream, OuterOutput>: ParserProtocol where OuterOutput: ParserProtocol, OuterOutput.Stream == Stream, OuterOutput.Failure == Never {
+struct FlattenParser<OuterOutput>: ParserProtocol where OuterOutput: ParserProtocol, OuterOutput.Failure == Never {
     typealias Output = OuterOutput.Output
     typealias Failure = Never
     
-    let p: Parser<Stream, OuterOutput, Never>
+    let p: Parser<OuterOutput, Never>
     
-    init(_ p: Parser<Stream, OuterOutput, Never>) {
+    init(_ p: Parser<OuterOutput, Never>) {
         self.p = p
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: OuterOutput.Output, endIndex: Stream.Index), Never> {
-        let (outerOutput, index) = p.parse(from: stream, startingAt: index)
-        return .success(outerOutput.parse(from: stream, startingAt: index))
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: OuterOutput.Output, endIndex: String.Index), Never> {
+        let (outerOutput, index) = p.parse(from: string, startingAt: index)
+        return .success(outerOutput.parse(from: string, startingAt: index))
     }
 }
 
 public extension Parser {
-    func flatten() -> Parser<Stream, Output.Output, FlattenParserFailure<Failure, Output.Failure>> where Output: ParserProtocol, Output.Stream == Stream {
+    func flatten() -> Parser<Output.Output, FlattenParserFailure<Failure, Output.Failure>> where Output: ParserProtocol {
         FFlattenFParser(self).parser
     }
-    func flatten() -> Parser<Stream, Output.Output, Failure> where Output: ParserProtocol, Output.Stream == Stream, Output.Failure == Never {
+    func flatten() -> Parser<Output.Output, Failure> where Output: ParserProtocol, Output.Failure == Never {
         FlattenFParser(self).parser
     }
-    func flatten() -> Parser<Stream, Output.Output, Output.Failure> where Output: ParserProtocol, Output.Stream == Stream, Failure == Never {
+    func flatten() -> Parser<Output.Output, Output.Failure> where Output: ParserProtocol, Failure == Never {
         FFlattenParser(self).parser
     }
-    func flatten() -> Parser<Stream, Output.Output, Never> where Output: ParserProtocol, Output.Stream == Stream, Output.Failure == Never, Failure == Never {
+    func flatten() -> Parser<Output.Output, Never> where Output: ParserProtocol, Output.Failure == Never, Failure == Never {
         FlattenParser(self).parser
     }
 }

@@ -1,14 +1,14 @@
-struct RemainderParser<Stream: Collection>: ParserProtocol {
-    typealias Output = Stream.SubSequence
+struct RemainderParser: ParserProtocol {
+    typealias Output = Substring
     typealias Failure = Never
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Stream.SubSequence, endIndex: Stream.Index), Never> {
-        return .success((stream[index...], stream.endIndex))
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Substring, endIndex: String.Index), Never> {
+        return .success((string[index...], string.endIndex))
     }
 }
 
 public extension Parsers {
-    static func remainder() -> Parser<Stream, Stream.SubSequence, Never> {
+    static func remainder() -> Parser<Substring, Never> {
         RemainderParser().parser
     }
 }

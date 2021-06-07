@@ -1,25 +1,25 @@
 @frozen
-public enum ExactlyParserFailure<Stream: Collection, ParseFailure: Error>: Error {
+public enum ExactlyParserFailure<ParseOutput, ParseFailure: Error>: Error {
     case parseFailure(ParseFailure)
-    case unconsumedInput(Stream.Index)
+    case unconsumedInput(output: ParseOutput, endIndex: String.Index)
 }
 
-struct ExactlyParser<Stream: Collection, Output, ParseFailure: Error>: ParserProtocol {
-    typealias Failure = ExactlyParserFailure<Stream, ParseFailure>
+struct ExactlyParser<Output, ParseFailure: Error>: ParserProtocol {
+    typealias Failure = ExactlyParserFailure<Output, ParseFailure>
     
-    let p: Parser<Stream, Output, ParseFailure>
+    let p: Parser<Output, ParseFailure>
     
-    init(_ p: Parser<Stream, Output, ParseFailure>) {
+    init(_ p: Parser<Output, ParseFailure>) {
         self.p = p
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), ExactlyParserFailure<Stream, ParseFailure>> {
-        switch p.parse(from: stream, startingAt: index) {
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), ExactlyParserFailure<Output, ParseFailure>> {
+        switch p.parse(from: string, startingAt: index) {
         case .failure(let parseFailure):
             return .failure(.parseFailure(parseFailure))
         case .success(let (parseOutput, index)):
-            guard index == stream.endIndex else {
-                return .failure(.unconsumedInput(index))
+            guard index == string.endIndex else {
+                return .failure(.unconsumedInput(output: parseOutput, endIndex: index))
             }
             return .success((parseOutput, index))
         }
@@ -27,7 +27,7 @@ struct ExactlyParser<Stream: Collection, Output, ParseFailure: Error>: ParserPro
 }
 
 public extension Parser {
-    func exactly() -> Parser<Stream, Output, ExactlyParserFailure<Stream, Failure>> {
+    func exactly() -> Parser<Output, ExactlyParserFailure<Output, Failure>> {
         ExactlyParser(self).parser
     }
 }

@@ -4,18 +4,18 @@ public enum MapParserFailure<ParseFailure: Error, MapFailure: Error>: Error {
     case mapFailure(MapFailure)
 }
 
-struct FMapFParser<Stream: Collection, ParseOutput, ParseFailure: Error, MapOutput, MapFailure: Error>: ParserProtocol {
+struct FMapFParser<ParseOutput, ParseFailure: Error, MapOutput, MapFailure: Error>: ParserProtocol {
     typealias Output = MapOutput
     typealias Failure = MapParserFailure<ParseFailure, MapFailure>
     
-    let p: Parser<Stream, ParseOutput, ParseFailure>
+    let p: Parser<ParseOutput, ParseFailure>
     let f: (ParseOutput) -> Result<MapOutput, MapFailure>
     
-    init(_ p: Parser<Stream, ParseOutput, ParseFailure>, _ f: @escaping (ParseOutput) -> Result<MapOutput, MapFailure>) {
+    init(_ p: Parser<ParseOutput, ParseFailure>, _ f: @escaping (ParseOutput) -> Result<MapOutput, MapFailure>) {
         self.p = p
         self.f = f
     }
-    init(_ p: Parser<Stream, ParseOutput, ParseFailure>, _ f: @escaping (ParseOutput) throws -> MapOutput) where MapFailure == Error {
+    init(_ p: Parser<ParseOutput, ParseFailure>, _ f: @escaping (ParseOutput) throws -> MapOutput) where MapFailure == Error {
         self.p = p
         self.f = {
             do {
@@ -25,13 +25,13 @@ struct FMapFParser<Stream: Collection, ParseOutput, ParseFailure: Error, MapOutp
             }
         }
     }
-    init(_ p: Parser<Stream, ParseOutput, ParseFailure>, _ k: KeyPath<ParseOutput, Result<MapOutput, MapFailure>>) {
+    init(_ p: Parser<ParseOutput, ParseFailure>, _ k: KeyPath<ParseOutput, Result<MapOutput, MapFailure>>) {
         self.p = p
         self.f = { $0[keyPath: k] }
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: MapOutput, endIndex: Stream.Index), MapParserFailure<ParseFailure, MapFailure>> {
-        switch p.parse(from: stream, startingAt: index) {
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: MapOutput, endIndex: String.Index), MapParserFailure<ParseFailure, MapFailure>> {
+        switch p.parse(from: string, startingAt: index) {
         case .failure(let parseFailure):
             return .failure(.parseFailure(parseFailure))
         case .success(let (parseOutput, index)):
@@ -45,18 +45,18 @@ struct FMapFParser<Stream: Collection, ParseOutput, ParseFailure: Error, MapOutp
     }
 }
 
-struct FMapParser<Stream: Collection, ParseOutput, MapOutput, MapFailure: Error>: ParserProtocol {
+struct FMapParser<ParseOutput, MapOutput, MapFailure: Error>: ParserProtocol {
     typealias Output = MapOutput
     typealias Failure = MapFailure
     
-    let p: Parser<Stream, ParseOutput, Never>
+    let p: Parser<ParseOutput, Never>
     let f: (ParseOutput) -> Result<MapOutput, MapFailure>
     
-    init(_ p: Parser<Stream, ParseOutput, Never>, _ f: @escaping (ParseOutput) -> Result<MapOutput, MapFailure>) {
+    init(_ p: Parser<ParseOutput, Never>, _ f: @escaping (ParseOutput) -> Result<MapOutput, MapFailure>) {
         self.p = p
         self.f = f
     }
-    init(_ p: Parser<Stream, ParseOutput, Never>, _ f: @escaping (ParseOutput) throws -> MapOutput) where MapFailure == Error {
+    init(_ p: Parser<ParseOutput, Never>, _ f: @escaping (ParseOutput) throws -> MapOutput) where MapFailure == Error {
         self.p = p
         self.f = {
             do {
@@ -66,13 +66,13 @@ struct FMapParser<Stream: Collection, ParseOutput, MapOutput, MapFailure: Error>
             }
         }
     }
-    init(_ p: Parser<Stream, ParseOutput, Never>, _ k: KeyPath<ParseOutput, Result<MapOutput, MapFailure>>) {
+    init(_ p: Parser<ParseOutput, Never>, _ k: KeyPath<ParseOutput, Result<MapOutput, MapFailure>>) {
         self.p = p
         self.f = { $0[keyPath: k] }
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: MapOutput, endIndex: Stream.Index), MapFailure> {
-        let (parseOutput, index) = p.parse(from: stream, startingAt: index)
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: MapOutput, endIndex: String.Index), MapFailure> {
+        let (parseOutput, index) = p.parse(from: string, startingAt: index)
         switch f(parseOutput) {
         case .success(let mapOutput):
             return .success((mapOutput, index))
@@ -82,24 +82,24 @@ struct FMapParser<Stream: Collection, ParseOutput, MapOutput, MapFailure: Error>
     }
 }
 
-struct MapFParser<Stream: Collection, ParseOutput, ParseFailure: Error, MapOutput>: ParserProtocol {
+struct MapFParser<ParseOutput, ParseFailure: Error, MapOutput>: ParserProtocol {
     typealias Output = MapOutput
     typealias Failure = ParseFailure
     
-    let p: Parser<Stream, ParseOutput, ParseFailure>
+    let p: Parser<ParseOutput, ParseFailure>
     let f: (ParseOutput) -> MapOutput
     
-    init(_ p: Parser<Stream, ParseOutput, ParseFailure>, _ f: @escaping (ParseOutput) -> MapOutput) {
+    init(_ p: Parser<ParseOutput, ParseFailure>, _ f: @escaping (ParseOutput) -> MapOutput) {
         self.p = p
         self.f = f
     }
-    init(_ p: Parser<Stream, ParseOutput, ParseFailure>, _ k: KeyPath<ParseOutput, MapOutput>) {
+    init(_ p: Parser<ParseOutput, ParseFailure>, _ k: KeyPath<ParseOutput, MapOutput>) {
         self.p = p
         self.f = { $0[keyPath: k] }
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: MapOutput, endIndex: Stream.Index), ParseFailure> {
-        switch p.parse(from: stream, startingAt: index) {
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: MapOutput, endIndex: String.Index), ParseFailure> {
+        switch p.parse(from: string, startingAt: index) {
         case .failure(let parseFailure):
             return .failure(parseFailure)
         case .success(let (parseOutput, index)):
@@ -108,60 +108,60 @@ struct MapFParser<Stream: Collection, ParseOutput, ParseFailure: Error, MapOutpu
     }
 }
 
-struct MapParser<Stream: Collection, ParseOutput, MapOutput>: ParserProtocol {
+struct MapParser<ParseOutput, MapOutput>: ParserProtocol {
     typealias Output = MapOutput
     typealias Failure = Never
     
-    let p: Parser<Stream, ParseOutput, Never>
+    let p: Parser<ParseOutput, Never>
     let f: (ParseOutput) -> MapOutput
     
-    init(_ p: Parser<Stream, ParseOutput, Never>, _ f: @escaping (ParseOutput) -> MapOutput) {
+    init(_ p: Parser<ParseOutput, Never>, _ f: @escaping (ParseOutput) -> MapOutput) {
         self.p = p
         self.f = f
     }
-    init(_ p: Parser<Stream, ParseOutput, Never>, _ k: KeyPath<ParseOutput, MapOutput>) {
+    init(_ p: Parser<ParseOutput, Never>, _ k: KeyPath<ParseOutput, MapOutput>) {
         self.p = p
         self.f = { $0[keyPath: k] }
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: MapOutput, endIndex: Stream.Index), Never> {
-        let (parseOutput, index) = p.parse(from: stream, startingAt: index)
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: MapOutput, endIndex: String.Index), Never> {
+        let (parseOutput, index) = p.parse(from: string, startingAt: index)
         return .success((f(parseOutput), index))
     }
 }
 
 public extension Parser {
-    func map<MapOutput, MapFailure>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> Parser<Stream, MapOutput, MapParserFailure<Failure, MapFailure>> {
+    func map<MapOutput, MapFailure>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> Parser<MapOutput, MapParserFailure<Failure, MapFailure>> {
         FMapFParser(self, f).parser
     }
-    func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> Parser<Stream, MapOutput, MapParserFailure<Failure, Error>> {
+    func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> Parser<MapOutput, MapParserFailure<Failure, Error>> {
         FMapFParser(self, f).parser
     }
-    func map<MapOutput, MapFailure>(_ k: KeyPath<Output, Result<MapOutput, MapFailure>>) -> Parser<Stream, MapOutput, MapParserFailure<Failure, MapFailure>> {
+    func map<MapOutput, MapFailure>(_ k: KeyPath<Output, Result<MapOutput, MapFailure>>) -> Parser<MapOutput, MapParserFailure<Failure, MapFailure>> {
         FMapFParser(self, k).parser
     }
     
-    func map<MapOutput, MapFailure>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> Parser<Stream, MapOutput, MapFailure> where Failure == Never {
+    func map<MapOutput, MapFailure>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> Parser<MapOutput, MapFailure> where Failure == Never {
         FMapParser(self, f).parser
     }
-    func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> Parser<Stream, MapOutput, Error> where Failure == Never {
+    func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> Parser<MapOutput, Error> where Failure == Never {
         FMapParser(self, f).parser
     }
-    func map<MapOutput, MapFailure>(_ k: KeyPath<Output, Result<MapOutput, MapFailure>>) -> Parser<Stream, MapOutput, MapFailure> where Failure == Never {
+    func map<MapOutput, MapFailure>(_ k: KeyPath<Output, Result<MapOutput, MapFailure>>) -> Parser<MapOutput, MapFailure> where Failure == Never {
         FMapParser(self, k).parser
     }
     
-    func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> Parser<Stream, MapOutput, Failure> {
+    func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> Parser<MapOutput, Failure> {
         MapFParser(self, f).parser
     }
-    func map<MapOutput>(_ k: KeyPath<Output, MapOutput>) -> Parser<Stream, MapOutput, Failure> {
+    func map<MapOutput>(_ k: KeyPath<Output, MapOutput>) -> Parser<MapOutput, Failure> {
         MapFParser(self, k).parser
     }
     
-    func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> Parser<Stream, MapOutput, Never> where Failure == Never {
+    func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> Parser<MapOutput, Never> where Failure == Never {
         MapParser(self, f).parser
     }
-    func map<MapOutput>(_ k: KeyPath<Output, MapOutput>) -> Parser<Stream, MapOutput, Never> where Failure == Never {
+    func map<MapOutput>(_ k: KeyPath<Output, MapOutput>) -> Parser<MapOutput, Never> where Failure == Never {
         MapParser(self, k).parser
     }
 }

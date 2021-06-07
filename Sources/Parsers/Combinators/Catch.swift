@@ -1,14 +1,14 @@
-struct FCatchParser<Stream: Collection, Output, ParseFailure: Error, CatchFailure: Error>: ParserProtocol {
+struct FCatchParser<Output, ParseFailure: Error, CatchFailure: Error>: ParserProtocol {
     typealias Failure = CatchFailure
     
-    let p: Parser<Stream, Output, ParseFailure>
+    let p: Parser<Output, ParseFailure>
     let c: (ParseFailure) -> Result<Output, CatchFailure>
     
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ c: @escaping (ParseFailure) -> Result<Output, CatchFailure>) {
+    init(_ p: Parser<Output, ParseFailure>, _ c: @escaping (ParseFailure) -> Result<Output, CatchFailure>) {
         self.p = p
         self.c = c
     }
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ c: @escaping (ParseFailure) throws -> Output) where CatchFailure == Error {
+    init(_ p: Parser<Output, ParseFailure>, _ c: @escaping (ParseFailure) throws -> Output) where CatchFailure == Error {
         self.p = p
         self.c = {
             do {
@@ -18,26 +18,26 @@ struct FCatchParser<Stream: Collection, Output, ParseFailure: Error, CatchFailur
             }
         }
     }
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ k: KeyPath<ParseFailure, Result<Output, CatchFailure>>) {
+    init(_ p: Parser<Output, ParseFailure>, _ k: KeyPath<ParseFailure, Result<Output, CatchFailure>>) {
         self.p = p
         self.c = { $0[keyPath: k] }
     }
     
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ c: @escaping (ParseFailure) -> CatchFailure) {
+    init(_ p: Parser<Output, ParseFailure>, _ c: @escaping (ParseFailure) -> CatchFailure) {
         self.p = p
         self.c = { .failure(c($0)) }
     }
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ k: KeyPath<ParseFailure, CatchFailure>) {
+    init(_ p: Parser<Output, ParseFailure>, _ k: KeyPath<ParseFailure, CatchFailure>) {
         self.p = p
         self.c = { .failure($0[keyPath: k]) }
     }
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ f: CatchFailure) {
+    init(_ p: Parser<Output, ParseFailure>, _ f: CatchFailure) {
         self.p = p
         self.c = { _ in .failure(f) }
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), CatchFailure> {
-        switch p.parse(from: stream, startingAt: index) {
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), CatchFailure> {
+        switch p.parse(from: string, startingAt: index) {
         case .failure(let parseFailure):
             switch c(parseFailure) {
             case .failure(let catchFailure):
@@ -51,27 +51,27 @@ struct FCatchParser<Stream: Collection, Output, ParseFailure: Error, CatchFailur
     }
 }
 
-struct CatchParser<Stream: Collection, Output, ParseFailure: Error>: ParserProtocol {
+struct CatchParser<Output, ParseFailure: Error>: ParserProtocol {
     typealias Failure = Never
     
-    let p: Parser<Stream, Output, ParseFailure>
+    let p: Parser<Output, ParseFailure>
     let c: (ParseFailure) -> Output
     
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ c: @escaping (ParseFailure) -> Output) {
+    init(_ p: Parser<Output, ParseFailure>, _ c: @escaping (ParseFailure) -> Output) {
         self.p = p
         self.c = c
     }
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ k: KeyPath<ParseFailure, Output>) {
+    init(_ p: Parser<Output, ParseFailure>, _ k: KeyPath<ParseFailure, Output>) {
         self.p = p
         self.c = { $0[keyPath: k] }
     }
-    init(_ p: Parser<Stream, Output, ParseFailure>, _ o: Output) {
+    init(_ p: Parser<Output, ParseFailure>, _ o: Output) {
         self.p = p
         self.c = { _ in o }
     }
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Output, endIndex: Stream.Index), Never> {
-        switch p.parse(from: stream, startingAt: index) {
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Never> {
+        switch p.parse(from: string, startingAt: index) {
         case .failure(let parseFailure):
             return .success((c(parseFailure), index))
         case .success(let (output, index)):
@@ -81,39 +81,39 @@ struct CatchParser<Stream: Collection, Output, ParseFailure: Error>: ParserProto
 }
 
 public extension Parser {
-    func `catch`<CatchFailure>(_ c: @escaping (Failure) -> Result<Output, CatchFailure>) -> Parser<Stream, Output, CatchFailure> {
+    func `catch`<CatchFailure>(_ c: @escaping (Failure) -> Result<Output, CatchFailure>) -> Parser<Output, CatchFailure> {
         FCatchParser(self, c).parser
     }
-    func `catch`(_ c: @escaping (Failure) throws -> Output) -> Parser<Stream, Output, Error> {
+    func `catch`(_ c: @escaping (Failure) throws -> Output) -> Parser<Output, Error> {
         FCatchParser(self, c).parser
     }
-    func `catch`<CatchFailure>(_ k: KeyPath<Failure, Result<Output, CatchFailure>>) -> Parser<Stream, Output, CatchFailure> {
+    func `catch`<CatchFailure>(_ k: KeyPath<Failure, Result<Output, CatchFailure>>) -> Parser<Output, CatchFailure> {
         FCatchParser(self, k).parser
     }
     
-    func mapFailures<CatchFailure>(_ c: @escaping (Failure) -> CatchFailure) -> Parser<Stream, Output, CatchFailure> {
+    func mapFailures<CatchFailure>(_ c: @escaping (Failure) -> CatchFailure) -> Parser<Output, CatchFailure> {
         FCatchParser(self, c).parser
     }
-    func mapFailures<CatchFailure>(_ c: KeyPath<Failure, CatchFailure>) -> Parser<Stream, Output, CatchFailure> {
+    func mapFailures<CatchFailure>(_ c: KeyPath<Failure, CatchFailure>) -> Parser<Output, CatchFailure> {
         FCatchParser(self, c).parser
     }
     
-    func replaceFailures<CatchFailure>(withFailure f: CatchFailure) -> Parser<Stream, Output, CatchFailure> {
+    func replaceFailures<CatchFailure>(withFailure f: CatchFailure) -> Parser<Output, CatchFailure> {
         FCatchParser(self, f).parser
     }
     
-    func `catch`(_ c: @escaping (Failure) -> Output) -> Parser<Stream, Output, Never> {
+    func `catch`(_ c: @escaping (Failure) -> Output) -> Parser<Output, Never> {
         CatchParser(self, c).parser
     }
-    func `catch`(_ k: KeyPath<Failure, Output>) -> Parser<Stream, Output, Never> {
+    func `catch`(_ k: KeyPath<Failure, Output>) -> Parser<Output, Never> {
         CatchParser(self, k).parser
     }
     
-    func replaceFailures(withOutput o: Output) -> Parser<Stream, Output, Never> {
+    func replaceFailures(withOutput o: Output) -> Parser<Output, Never> {
         CatchParser(self, o).parser
     }
     
-    func assertNonfailing(file: String = #file, function: String = #function, line: Int = #line) -> Parser<Stream, Output, Never> {
+    func assertNonfailing(file: String = #file, function: String = #function, line: Int = #line) -> Parser<Output, Never> {
         CatchParser(self, { fatalError("Parser.assertNonfailing() failed with \($0) in \(function) \(file):\(line).") }).parser
     }
 }

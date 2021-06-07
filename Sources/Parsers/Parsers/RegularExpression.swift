@@ -1,7 +1,6 @@
 import Foundation
 
 struct RegularExpressionPrefixParser: ParserProtocol {
-    typealias Stream = String
     typealias Output = RegularExpressionMatch
     typealias Failure = NoMatchFailure
     
@@ -20,7 +19,6 @@ struct RegularExpressionPrefixParser: ParserProtocol {
 }
 
 struct RegularExpressionNextMatchParser: ParserProtocol {
-    typealias Stream = String
     typealias Output = (prefix: Substring, match: RegularExpressionMatch)
     typealias Failure = NoMatchFailure
     
@@ -39,10 +37,10 @@ struct RegularExpressionNextMatchParser: ParserProtocol {
 }
 
 public extension NSRegularExpression {
-    func prefixParser() -> Parser<String, RegularExpressionMatch, NoMatchFailure> {
+    func prefixParser() -> Parser<RegularExpressionMatch, NoMatchFailure> {
         RegularExpressionPrefixParser(self).parser
     }
-    func nextMatchParser() -> Parser<String, (prefix: Substring, match: RegularExpressionMatch), NoMatchFailure> {
+    func nextMatchParser() -> Parser<(prefix: Substring, match: RegularExpressionMatch), NoMatchFailure> {
         RegularExpressionNextMatchParser(self).parser
     }
 }

@@ -8,11 +8,11 @@ final class ParsersTests: XCTestCase {
             typealias Output = Int
             typealias Failure = Never
 
-            var parser: Parser<String, Int, Never> {
+            var parser: Parser<Int, Never> {
                 AllOf {
-                    Parsers<String>.prefix("(")
+                    Parsers.prefix("(")
                     self
-                    Parsers<String>.prefix(")")
+                    Parsers.prefix(")")
                     self
                 }
                 .map({ (_, inner, _, outer) in inner + 1 + outer })

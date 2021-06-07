@@ -1,10 +1,10 @@
-struct NextParser<Stream: Collection>: ParserProtocol {
-    typealias Output = Stream.Element
+struct NextParser: ParserProtocol {
+    typealias Output = String.Element
     typealias Failure = EmptyFailure
     
-    func parse(from stream: Stream, startingAt index: Stream.Index) -> Result<(value: Stream.Element, endIndex: Stream.Index), EmptyFailure> {
-        if stream.indices.contains(index) {
-            return .success((stream[index], stream.index(after: index)))
+    func parse(from string: String, startingAt index: String.Index) -> Result<(value: String.Element, endIndex: String.Index), EmptyFailure> {
+        if string.indices.contains(index) {
+            return .success((string[index], string.index(after: index)))
         } else {
             return .failure(.empty)
         }
@@ -12,7 +12,7 @@ struct NextParser<Stream: Collection>: ParserProtocol {
 }
 
 public extension Parsers {
-    static func next() -> Parser<Stream, Stream.Element, EmptyFailure> {
+    static func next() -> Parser<String.Element, EmptyFailure> {
         NextParser().parser
     }
 }

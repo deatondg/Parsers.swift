@@ -1,2 +1,2 @@
 @frozen
-public enum Parsers<Stream: Collection> {}
+public enum Parsers {}

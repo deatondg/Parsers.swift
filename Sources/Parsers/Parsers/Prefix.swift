@@ -1,5 +1,5 @@
-struct PrefixParser<Stream: Collection, PossiblePrefix: Collection>: ParserProtocol where Stream.Element: Equatable, PossiblePrefix.Element == Stream.Element {
-    typealias Output = Stream.SubSequence
+struct PrefixParser<PossiblePrefix: Collection>: ParserProtocol where PossiblePrefix.Element == Character {
+    typealias Output = Substring
     typealias Failure = NoMatchFailure
     
     let p: PossiblePrefix
@@ -7,25 +7,25 @@ struct PrefixParser<Stream: Collection, PossiblePrefix: Collection>: ParserProto
     init(_ p: PossiblePrefix) {
         self.p = p
     }
-    init(_ p: Stream.Element) where PossiblePrefix == CollectionOfOne<Stream.Element> {
+    init(_ p: String.Element) where PossiblePrefix == CollectionOfOne<String.Element> {
         self.p = CollectionOfOne(p)
     }
     
-    func parse(from stream: Stream, startingAt startIndex: Stream.Index) -> Result<(value: Stream.SubSequence, endIndex: Stream.Index), NoMatchFailure> {
-        if stream[startIndex...].starts(with: p) {
-            let endIndex = stream.index(startIndex, offsetBy: p.count)
-            return .success((stream[startIndex..<endIndex], endIndex))
+    func parse(from string: String, startingAt startIndex: String.Index) -> Result<(value: String.SubSequence, endIndex: String.Index), NoMatchFailure> {
+        if string[startIndex...].starts(with: p) {
+            let endIndex = string.index(startIndex, offsetBy: p.count)
+            return .success((string[startIndex..<endIndex], endIndex))
         } else {
             return .failure(.noMatch)
         }
     }
 }
 
-public extension Parsers where Stream.Element: Equatable {
-    static func prefix<PossiblePrefix: Collection>(_ p: PossiblePrefix) -> Parser<Stream, Stream.SubSequence, NoMatchFailure> where PossiblePrefix.Element == Stream.Element {
+public extension Parsers {
+    static func prefix<PossiblePrefix: Collection>(_ p: PossiblePrefix) -> Parser<String.SubSequence, NoMatchFailure> where PossiblePrefix.Element == Character {
         PrefixParser(p).parser
     }
-    static func prefix(_ p: Stream.Element) -> Parser<Stream, Stream.SubSequence, NoMatchFailure> {
+    static func prefix(_ p: Character) -> Parser<Substring, NoMatchFailure> {
         PrefixParser(p).parser
     }
 }
