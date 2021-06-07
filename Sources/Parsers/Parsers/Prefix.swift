@@ -23,9 +23,9 @@ struct PrefixParser<PossiblePrefix: Collection>: ParserProtocol where PossiblePr
 
 public extension Parsers {
     static func prefix<PossiblePrefix: Collection>(_ p: PossiblePrefix) -> Parser<Substring, NoMatchFailure> where PossiblePrefix.Element == Character {
-        PrefixParser(p).parser
+        PrefixParser(p).eraseToParser()
     }
     static func prefix(_ p: Character) -> Parser<Substring, NoMatchFailure> {
-        PrefixParser(p).parser
+        PrefixParser(p).eraseToParser()
     }
 }

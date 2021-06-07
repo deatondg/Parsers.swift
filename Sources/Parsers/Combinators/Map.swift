@@ -132,36 +132,36 @@ struct MapParser<ParseOutput, MapOutput>: ParserProtocol {
 
 public extension Parser {
     func map<MapOutput, MapFailure>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> Parser<MapOutput, MapParserFailure<Failure, MapFailure>> {
-        FMapFParser(self, f).parser
+        FMapFParser(self, f).eraseToParser()
     }
     func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> Parser<MapOutput, MapParserFailure<Failure, Error>> {
-        FMapFParser(self, f).parser
+        FMapFParser(self, f).eraseToParser()
     }
     func map<MapOutput, MapFailure>(_ k: KeyPath<Output, Result<MapOutput, MapFailure>>) -> Parser<MapOutput, MapParserFailure<Failure, MapFailure>> {
-        FMapFParser(self, k).parser
+        FMapFParser(self, k).eraseToParser()
     }
     
     func map<MapOutput, MapFailure>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> Parser<MapOutput, MapFailure> where Failure == Never {
-        FMapParser(self, f).parser
+        FMapParser(self, f).eraseToParser()
     }
     func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> Parser<MapOutput, Error> where Failure == Never {
-        FMapParser(self, f).parser
+        FMapParser(self, f).eraseToParser()
     }
     func map<MapOutput, MapFailure>(_ k: KeyPath<Output, Result<MapOutput, MapFailure>>) -> Parser<MapOutput, MapFailure> where Failure == Never {
-        FMapParser(self, k).parser
+        FMapParser(self, k).eraseToParser()
     }
     
     func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> Parser<MapOutput, Failure> {
-        MapFParser(self, f).parser
+        MapFParser(self, f).eraseToParser()
     }
     func map<MapOutput>(_ k: KeyPath<Output, MapOutput>) -> Parser<MapOutput, Failure> {
-        MapFParser(self, k).parser
+        MapFParser(self, k).eraseToParser()
     }
     
     func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> Parser<MapOutput, Never> where Failure == Never {
-        MapParser(self, f).parser
+        MapParser(self, f).eraseToParser()
     }
     func map<MapOutput>(_ k: KeyPath<Output, MapOutput>) -> Parser<MapOutput, Never> where Failure == Never {
-        MapParser(self, k).parser
+        MapParser(self, k).eraseToParser()
     }
 }

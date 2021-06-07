@@ -38,9 +38,9 @@ struct RegularExpressionNextMatchParser: ParserProtocol {
 
 public extension NSRegularExpression {
     func prefixParser() -> Parser<RegularExpressionMatch, NoMatchFailure> {
-        RegularExpressionPrefixParser(self).parser
+        RegularExpressionPrefixParser(self).eraseToParser()
     }
     func nextMatchParser() -> Parser<(prefix: Substring, match: RegularExpressionMatch), NoMatchFailure> {
-        RegularExpressionNextMatchParser(self).parser
+        RegularExpressionNextMatchParser(self).eraseToParser()
     }
 }

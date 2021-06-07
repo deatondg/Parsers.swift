@@ -14,6 +14,6 @@ struct JustParser<Output>: ParserProtocol {
 
 public extension Parsers {
     static func just<Output>(_ v: Output) -> Parser<Output, Never> {
-        JustParser(v).parser
+        JustParser(v).eraseToParser()
     }
 }

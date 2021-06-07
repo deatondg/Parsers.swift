@@ -5,7 +5,7 @@ public enum ParserBuilder {
         p
     }
     public static func buildExpression<P: ParserProtocol>(_ p: P) -> Parser<P.Output, P.Failure> {
-        p.parser
+        p.eraseToParser()
     }
     public static func buildExpression<Output, Failure: Error>(_ p: @escaping PrimitiveParser<Output, Failure>) -> Parser<Output, Failure> {
         Parser(__primitiveParser: p)

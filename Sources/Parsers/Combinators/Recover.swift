@@ -65,19 +65,19 @@ struct RecoverParser<Output, ParseFailure: Error>: ParserProtocol {
 
 public extension Parser {
     func recover<CatchFailure>(_ c: @escaping (Failure) -> Result<(value: Output, endIndex: String.Index), CatchFailure>) -> Parser<Output, CatchFailure> {
-        FRecoverParser(self, c).parser
+        FRecoverParser(self, c).eraseToParser()
     }
     func recover(_ c: @escaping (Failure) throws -> (value: Output, endIndex: String.Index)) -> Parser<Output, Error> {
-        FRecoverParser(self, c).parser
+        FRecoverParser(self, c).eraseToParser()
     }
     func recover<CatchFailure>(_ k: KeyPath<Failure, Result<(value: Output, endIndex: String.Index), CatchFailure>>) -> Parser<Output, CatchFailure> {
-        FRecoverParser(self, k).parser
+        FRecoverParser(self, k).eraseToParser()
     }
     
     func recover(_ c: @escaping (Failure) -> (value: Output, endIndex: String.Index)) -> Parser<Output, Never> {
-        RecoverParser(self, c).parser
+        RecoverParser(self, c).eraseToParser()
     }
     func recover(_ k: KeyPath<Failure, (value: Output, endIndex: String.Index)>) -> Parser<Output, Never> {
-        RecoverParser(self, k).parser
+        RecoverParser(self, k).eraseToParser()
     }
 }

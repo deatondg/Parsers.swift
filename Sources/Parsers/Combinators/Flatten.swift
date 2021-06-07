@@ -88,15 +88,15 @@ struct FlattenParser<OuterOutput>: ParserProtocol where OuterOutput: ParserProto
 
 public extension Parser {
     func flatten() -> Parser<Output.Output, FlattenParserFailure<Failure, Output.Failure>> where Output: ParserProtocol {
-        FFlattenFParser(self).parser
+        FFlattenFParser(self).eraseToParser()
     }
     func flatten() -> Parser<Output.Output, Failure> where Output: ParserProtocol, Output.Failure == Never {
-        FlattenFParser(self).parser
+        FlattenFParser(self).eraseToParser()
     }
     func flatten() -> Parser<Output.Output, Output.Failure> where Output: ParserProtocol, Failure == Never {
-        FFlattenParser(self).parser
+        FFlattenParser(self).eraseToParser()
     }
     func flatten() -> Parser<Output.Output, Never> where Output: ParserProtocol, Output.Failure == Never, Failure == Never {
-        FlattenParser(self).parser
+        FlattenParser(self).eraseToParser()
     }
 }

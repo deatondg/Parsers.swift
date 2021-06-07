@@ -13,6 +13,6 @@ struct NextParser: ParserProtocol {
 
 public extension Parsers {
     static func next() -> Parser<Character, EmptyFailure> {
-        NextParser().parser
+        NextParser().eraseToParser()
     }
 }

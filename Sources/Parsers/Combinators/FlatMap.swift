@@ -167,32 +167,32 @@ struct FlatMapParser<OuterOutput, MapParser: ParserProtocol>: ParserProtocol whe
 
 public extension Parser {
     func flatMap<MapParser: ParserProtocol, MapFailure: Error>(_ f: @escaping (Output) -> Result<MapParser, MapFailure>) -> Parser<MapParser.Output, FlatMapParserFailure<Failure, MapFailure, MapParser.Failure>> {
-        FFlatFMapFParser(self, f).parser
+        FFlatFMapFParser(self, f).eraseToParser()
     }
     func flatMap<MapParser: ParserProtocol>(_ f: @escaping (Output) throws -> MapParser) -> Parser<MapParser.Output, FlatMapParserFailure<Failure, Error, MapParser.Failure>> {
-        FFlatFMapFParser(self, f).parser
+        FFlatFMapFParser(self, f).eraseToParser()
     }
     
     func flatMap<MapParser: ParserProtocol>(_ f: @escaping (Output) -> MapParser) -> Parser<MapParser.Output, FlatMapParserFailure<Failure, Never, MapParser.Failure>> {
-        FFlatMapFParser(self, f).parser
+        FFlatMapFParser(self, f).eraseToParser()
     }
     
     func flatMap<MapParser: ParserProtocol>(_ f: @escaping (Output) -> MapParser) -> Parser<MapParser.Output, Failure> where MapParser.Failure == Never {
-        FlatMapFParser(self, f).parser
+        FlatMapFParser(self, f).eraseToParser()
     }
     
     func flatMap<MapParser: ParserProtocol, MapFailure: Error>(_ f: @escaping (Output) -> Result<MapParser, MapFailure>) -> Parser<MapParser.Output, MapFailure> where MapParser.Failure == Never, Failure == Never {
-        FlatFMapParser(self, f).parser
+        FlatFMapParser(self, f).eraseToParser()
     }
     func flatMap<MapParser: ParserProtocol>(_ f: @escaping (Output) throws -> MapParser) -> Parser<MapParser.Output, Error> where MapParser.Failure == Never, Failure == Never {
-        FlatFMapParser(self, f).parser
+        FlatFMapParser(self, f).eraseToParser()
     }
     
     func flatMap<MapParser: ParserProtocol>(_ f: @escaping (Output) -> MapParser) -> Parser<MapParser.Output, MapParser.Failure> where Failure == Never {
-        FFlatMapParser(self, f).parser
+        FFlatMapParser(self, f).eraseToParser()
     }
     
     func flatMap<MapParser: ParserProtocol>(_ f: @escaping (Output) -> MapParser) -> Parser<MapParser.Output, Never> where MapParser.Failure == Never, Failure == Never {
-        FlatMapParser(self, f).parser
+        FlatMapParser(self, f).eraseToParser()
     }
 }

@@ -151,17 +151,17 @@ struct AllOf4Parser<O0, F0: Error, O1, F1: Error, O2, F2: Error, O3, F3: Error>:
 
 public func AllOf<O0, F0: Error>(@ParserBuilder ps: () -> Parser<O0, F0>) -> Parser<O0, OneOf1<F0>> {
     let ps = ps()
-    return AllOf1Parser(ps).parser
+    return AllOf1Parser(ps).eraseToParser()
 }
 public func AllOf<O0, F0: Error, O1, F1: Error>(@ParserBuilder ps: () -> (Parser<O0, F0>, Parser<O1, F1>)) -> Parser<(O0, O1), OneOf2<F0, F1>> {
     let ps = ps()
-    return AllOf2Parser(ps.0, ps.1).parser
+    return AllOf2Parser(ps.0, ps.1).eraseToParser()
 }
 public func AllOf<O0, F0: Error, O1, F1: Error, O2, F2: Error>(@ParserBuilder ps: () -> (Parser<O0, F0>, Parser<O1, F1>, Parser<O2, F2>)) -> Parser<(O0, O1, O2), OneOf3<F0, F1, F2>> {
     let ps = ps()
-    return AllOf3Parser(ps.0, ps.1, ps.2).parser
+    return AllOf3Parser(ps.0, ps.1, ps.2).eraseToParser()
 }
 public func AllOf<O0, F0: Error, O1, F1: Error, O2, F2: Error, O3, F3: Error>(@ParserBuilder ps: () -> (Parser<O0, F0>, Parser<O1, F1>, Parser<O2, F2>, Parser<O3, F3>)) -> Parser<(O0, O1, O2, O3), OneOf4<F0, F1, F2, F3>> {
     let ps = ps()
-    return AllOf4Parser(ps.0, ps.1, ps.2, ps.3).parser
+    return AllOf4Parser(ps.0, ps.1, ps.2, ps.3).eraseToParser()
 }

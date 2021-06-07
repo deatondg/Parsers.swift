@@ -14,9 +14,9 @@ struct ReplaceOutputsParser<ParseOutput, Failure: Error, Output>: ParserProtocol
 
 public extension Parser {
     func replaceOutputs<ReplaceOutput>(with o: ReplaceOutput) -> Parser<ReplaceOutput, Failure> {
-        ReplaceOutputsParser(self, o).parser
+        ReplaceOutputsParser(self, o).eraseToParser()
     }
     func ignoreOutputs() -> Parser<(), Failure> {
-        ReplaceOutputsParser(self, ()).parser
+        ReplaceOutputsParser(self, ()).eraseToParser()
     }
 }

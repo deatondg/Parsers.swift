@@ -8,6 +8,7 @@ public struct Parser<Output, Failure: Error>: ParserProtocol {
     }
     public var parser: Parser<Output, Failure> { self }
     
+    // TODO: Update this API
     init(__primitiveParser: @escaping PrimitiveParser<Output, Failure>) {
         self.primitiveParser = __primitiveParser
     }
@@ -31,31 +32,47 @@ public struct Parser<Output, Failure: Error>: ParserProtocol {
     */
 }
 
-//@dynamicMemberLookup
 public protocol ParserProtocol {
     associatedtype Output
     associatedtype Failure: Error
     
     func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure>
-    
-    @ParserBuilder
-    var parser: Parser<Output, Failure> { get }
-    
-//    subscript<T>(dynamicMember dynamicMember: KeyPath<Parser<Output, Failure>, T>) -> T { get }
 }
+
+// TODO: Use the correct API
+// This maybe should be part of the protocol, so it can be overridden.
 public extension ParserProtocol {
-    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure> {
-        self.parser.parse(from: string, startingAt: index)
-    }
-    
-    var parser: Parser<Output, Failure> {
+    func eraseToParser() -> Parser<Output, Failure> {
         Parser(__primitiveParser: self.parse)
     }
-    
+}
+
+//@dynamicMemberLookup
+//public protocol ParserProtocol {
+//    associatedtype Output
+//    associatedtype Failure: Error
+//
+//    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure>
+//
+//    @ParserBuilder
+//    var parser: Parser<Output, Failure> { get }
+//
+//    subscript<T>(dynamicMember dynamicMember: KeyPath<Parser<Output, Failure>, T>) -> T { get }
+//}
+//public extension ParserProtocol {
+//    func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure> {
+//        self.parser.parse(from: string, startingAt: index)
+//    }
+//
+//    var parser: Parser<Output, Failure> {
+//        Parser(__primitiveParser: self.parse)
+//    }
+//
 //    subscript<T>(dynamicMember keyPath: KeyPath<Parser<Output, Failure>, T>) -> T {
 //        self.parser[keyPath: keyPath]
 //    }
-}
+//}
+
 public extension ParserProtocol {
     func parse(from string: String, startingAt index: String.Index) -> (value: Output, endIndex: String.Index) where Failure == Never {
         self.parse(from: string, startingAt: index).get()
@@ -64,15 +81,14 @@ public extension ParserProtocol {
         try self.parse(from: string, startingAt: index).get()
     }
 }
-
-public extension ParserProtocol {
-    func parse(from string: String) -> Result<(value: Output, endIndex: String.Index), Failure> {
-        self.parse(from: string, startingAt: string.startIndex)
-    }
-    func parse(from string: String) -> (value: Output, endIndex: String.Index) where Failure == Never {
-        self.parse(from: string).get()
-    }
-    func parse(from string: String) throws -> (value: Output, endIndex: String.Index) {
-        try self.parse(from: string).get()
-    }
-}
+//public extension ParserProtocol {
+//    func parse(from string: String) -> Result<(value: Output, endIndex: String.Index), Failure> {
+//        self.parse(from: string, startingAt: string.startIndex)
+//    }
+//    func parse(from string: String) -> (value: Output, endIndex: String.Index) where Failure == Never {
+//        self.parse(from: string).get()
+//    }
+//    func parse(from string: String) throws -> (value: Output, endIndex: String.Index) {
+//        try self.parse(from: string).get()
+//    }
+//}

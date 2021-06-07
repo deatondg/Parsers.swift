@@ -9,6 +9,6 @@ struct RemainderParser: ParserProtocol {
 
 public extension Parsers {
     static func remainder() -> Parser<Substring, Never> {
-        RemainderParser().parser
+        RemainderParser().eraseToParser()
     }
 }

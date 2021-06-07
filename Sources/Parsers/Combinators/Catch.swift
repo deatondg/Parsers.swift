@@ -82,38 +82,38 @@ struct CatchParser<Output, ParseFailure: Error>: ParserProtocol {
 
 public extension Parser {
     func `catch`<CatchFailure>(_ c: @escaping (Failure) -> Result<Output, CatchFailure>) -> Parser<Output, CatchFailure> {
-        FCatchParser(self, c).parser
+        FCatchParser(self, c).eraseToParser()
     }
     func `catch`(_ c: @escaping (Failure) throws -> Output) -> Parser<Output, Error> {
-        FCatchParser(self, c).parser
+        FCatchParser(self, c).eraseToParser()
     }
     func `catch`<CatchFailure>(_ k: KeyPath<Failure, Result<Output, CatchFailure>>) -> Parser<Output, CatchFailure> {
-        FCatchParser(self, k).parser
+        FCatchParser(self, k).eraseToParser()
     }
     
     func mapFailures<CatchFailure>(_ c: @escaping (Failure) -> CatchFailure) -> Parser<Output, CatchFailure> {
-        FCatchParser(self, c).parser
+        FCatchParser(self, c).eraseToParser()
     }
     func mapFailures<CatchFailure>(_ c: KeyPath<Failure, CatchFailure>) -> Parser<Output, CatchFailure> {
-        FCatchParser(self, c).parser
+        FCatchParser(self, c).eraseToParser()
     }
     
     func replaceFailures<CatchFailure>(withFailure f: CatchFailure) -> Parser<Output, CatchFailure> {
-        FCatchParser(self, f).parser
+        FCatchParser(self, f).eraseToParser()
     }
     
     func `catch`(_ c: @escaping (Failure) -> Output) -> Parser<Output, Never> {
-        CatchParser(self, c).parser
+        CatchParser(self, c).eraseToParser()
     }
     func `catch`(_ k: KeyPath<Failure, Output>) -> Parser<Output, Never> {
-        CatchParser(self, k).parser
+        CatchParser(self, k).eraseToParser()
     }
     
     func replaceFailures(withOutput o: Output) -> Parser<Output, Never> {
-        CatchParser(self, o).parser
+        CatchParser(self, o).eraseToParser()
     }
     
     func assertNonfailing(file: String = #file, function: String = #function, line: Int = #line) -> Parser<Output, Never> {
-        CatchParser(self, { fatalError("Parser.assertNonfailing() failed with \($0) in \(function) \(file):\(line).") }).parser
+        CatchParser(self, { fatalError("Parser.assertNonfailing() failed with \($0) in \(function) \(file):\(line).") }).eraseToParser()
     }
 }
