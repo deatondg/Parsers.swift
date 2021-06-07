@@ -13,7 +13,7 @@ public enum ParserBuilder {
     public static func buildExpression<PossiblePrefix: Collection>(_ p: PossiblePrefix) -> Parser<Substring, NoMatchFailure> where PossiblePrefix.Element == Character {
         Parsers.prefix(p)
     }
-    public static func buildExpression(_ p: Character) -> Parser<String.SubSequence, NoMatchFailure> {
+    public static func buildExpression(_ p: Character) -> Parser<Substring, NoMatchFailure> {
         Parsers.prefix(p)
     }
     

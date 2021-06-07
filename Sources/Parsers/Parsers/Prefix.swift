@@ -7,11 +7,11 @@ struct PrefixParser<PossiblePrefix: Collection>: ParserProtocol where PossiblePr
     init(_ p: PossiblePrefix) {
         self.p = p
     }
-    init(_ p: String.Element) where PossiblePrefix == CollectionOfOne<String.Element> {
+    init(_ p: Character) where PossiblePrefix == CollectionOfOne<Character> {
         self.p = CollectionOfOne(p)
     }
     
-    func parse(from string: String, startingAt startIndex: String.Index) -> Result<(value: String.SubSequence, endIndex: String.Index), NoMatchFailure> {
+    func parse(from string: String, startingAt startIndex: String.Index) -> Result<(value: Substring, endIndex: String.Index), NoMatchFailure> {
         if string[startIndex...].starts(with: p) {
             let endIndex = string.index(startIndex, offsetBy: p.count)
             return .success((string[startIndex..<endIndex], endIndex))
@@ -22,7 +22,7 @@ struct PrefixParser<PossiblePrefix: Collection>: ParserProtocol where PossiblePr
 }
 
 public extension Parsers {
-    static func prefix<PossiblePrefix: Collection>(_ p: PossiblePrefix) -> Parser<String.SubSequence, NoMatchFailure> where PossiblePrefix.Element == Character {
+    static func prefix<PossiblePrefix: Collection>(_ p: PossiblePrefix) -> Parser<Substring, NoMatchFailure> where PossiblePrefix.Element == Character {
         PrefixParser(p).parser
     }
     static func prefix(_ p: Character) -> Parser<Substring, NoMatchFailure> {
