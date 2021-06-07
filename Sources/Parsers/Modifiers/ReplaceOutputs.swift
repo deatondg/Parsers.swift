@@ -12,11 +12,11 @@ struct ReplaceOutputsParser<ParseOutput, Failure: Error, Output>: ParserProtocol
     }
 }
 
-public extension Parser {
+public extension ParserProtocol {
     func replaceOutputs<ReplaceOutput>(with o: ReplaceOutput) -> Parser<ReplaceOutput, Failure> {
-        ReplaceOutputsParser(self, o).eraseToParser()
+        ReplaceOutputsParser(self.eraseToParser(), o).eraseToParser()
     }
     func ignoreOutputs() -> Parser<(), Failure> {
-        ReplaceOutputsParser(self, ()).eraseToParser()
+        ReplaceOutputsParser(self.eraseToParser(), ()).eraseToParser()
     }
 }

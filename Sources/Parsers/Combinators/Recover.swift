@@ -63,21 +63,21 @@ struct RecoverParser<Output, ParseFailure: Error>: ParserProtocol {
     }
 }
 
-public extension Parser {
+public extension ParserProtocol {
     func recover<CatchFailure>(_ c: @escaping (Failure) -> Result<(value: Output, endIndex: String.Index), CatchFailure>) -> Parser<Output, CatchFailure> {
-        FRecoverParser(self, c).eraseToParser()
+        FRecoverParser(self.eraseToParser(), c).eraseToParser()
     }
     func recover(_ c: @escaping (Failure) throws -> (value: Output, endIndex: String.Index)) -> Parser<Output, Error> {
-        FRecoverParser(self, c).eraseToParser()
+        FRecoverParser(self.eraseToParser(), c).eraseToParser()
     }
     func recover<CatchFailure>(_ k: KeyPath<Failure, Result<(value: Output, endIndex: String.Index), CatchFailure>>) -> Parser<Output, CatchFailure> {
-        FRecoverParser(self, k).eraseToParser()
+        FRecoverParser(self.eraseToParser(), k).eraseToParser()
     }
     
     func recover(_ c: @escaping (Failure) -> (value: Output, endIndex: String.Index)) -> Parser<Output, Never> {
-        RecoverParser(self, c).eraseToParser()
+        RecoverParser(self.eraseToParser(), c).eraseToParser()
     }
     func recover(_ k: KeyPath<Failure, (value: Output, endIndex: String.Index)>) -> Parser<Output, Never> {
-        RecoverParser(self, k).eraseToParser()
+        RecoverParser(self.eraseToParser(), k).eraseToParser()
     }
 }

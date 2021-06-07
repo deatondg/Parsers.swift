@@ -136,32 +136,32 @@ struct FlatCatchParser<Output, ParseFailure: Error, CatchParser: ParserProtocol>
     }
 }
 
-public extension Parser {
+public extension ParserProtocol {
     func `catch`<CatchParser: ParserProtocol, CatchFailure: Error>(_ c: @escaping (Failure) -> Result<CatchParser, CatchFailure>) -> Parser<Output, FlatCatchParserFailure<CatchFailure, CatchParser.Failure>> where CatchParser.Output == Output {
-        FFlatFCatchParser(self, c).eraseToParser()
+        FFlatFCatchParser(self.eraseToParser(), c).eraseToParser()
     }
     func `catch`<CatchParser: ParserProtocol>(_ c: @escaping (Failure) throws -> CatchParser) -> Parser<Output, FlatCatchParserFailure<Error, CatchParser.Failure>> where CatchParser.Output == Output {
-        FFlatFCatchParser(self, c).eraseToParser()
+        FFlatFCatchParser(self.eraseToParser(), c).eraseToParser()
     }
     
     func `catch`<CatchParser: ParserProtocol, CatchFailure: Error>(_ c: @escaping (Failure) -> Result<CatchParser, CatchFailure>) -> Parser<Output, CatchFailure> where CatchParser.Output == Output, CatchParser.Failure == Never {
-        FlatFCatchParser(self, c).eraseToParser()
+        FlatFCatchParser(self.eraseToParser(), c).eraseToParser()
     }
     func `catch`<CatchParser: ParserProtocol>(_ c: @escaping (Failure) throws -> CatchParser) -> Parser<Output, Error> where CatchParser.Output == Output, CatchParser.Failure == Never {
-        FlatFCatchParser(self, c).eraseToParser()
+        FlatFCatchParser(self.eraseToParser(), c).eraseToParser()
     }
     
     func `catch`<CatchParser: ParserProtocol>(_ c: @escaping (Failure) -> CatchParser) -> Parser<Output, CatchParser.Failure> where CatchParser.Output == Output {
-        FFlatCatchParser(self, c).eraseToParser()
+        FFlatCatchParser(self.eraseToParser(), c).eraseToParser()
     }
     func `catch`<CatchParser: ParserProtocol>(_ c: CatchParser) -> Parser<Output, CatchParser.Failure> where CatchParser.Output == Output {
-        FFlatCatchParser(self, c).eraseToParser()
+        FFlatCatchParser(self.eraseToParser(), c).eraseToParser()
     }
     
     func `catch`<CatchParser: ParserProtocol>(_ c: @escaping (Failure) -> CatchParser) -> Parser<Output, Never> where CatchParser.Output == Output, CatchParser.Failure == Never {
-        FlatCatchParser(self, c).eraseToParser()
+        FlatCatchParser(self.eraseToParser(), c).eraseToParser()
     }
     func `catch`<CatchParser: ParserProtocol>(_ c: CatchParser) -> Parser<Output, Never> where CatchParser.Output == Output, CatchParser.Failure == Never {
-        FlatCatchParser(self, c).eraseToParser()
+        FlatCatchParser(self.eraseToParser(), c).eraseToParser()
     }
 }

@@ -26,8 +26,8 @@ struct ExactlyParser<Output, ParseFailure: Error>: ParserProtocol {
     }
 }
 
-public extension Parser {
+public extension ParserProtocol {
     func exactly() -> Parser<Output, ExactlyParserFailure<Output, Failure>> {
-        ExactlyParser(self).eraseToParser()
+        ExactlyParser(self.eraseToParser()).eraseToParser()
     }
 }

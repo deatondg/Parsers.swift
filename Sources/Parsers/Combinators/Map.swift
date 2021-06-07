@@ -130,38 +130,38 @@ struct MapParser<ParseOutput, MapOutput>: ParserProtocol {
     }
 }
 
-public extension Parser {
+public extension ParserProtocol {
     func map<MapOutput, MapFailure>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> Parser<MapOutput, MapParserFailure<Failure, MapFailure>> {
-        FMapFParser(self, f).eraseToParser()
+        FMapFParser(self.eraseToParser(), f).eraseToParser()
     }
     func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> Parser<MapOutput, MapParserFailure<Failure, Error>> {
-        FMapFParser(self, f).eraseToParser()
+        FMapFParser(self.eraseToParser(), f).eraseToParser()
     }
     func map<MapOutput, MapFailure>(_ k: KeyPath<Output, Result<MapOutput, MapFailure>>) -> Parser<MapOutput, MapParserFailure<Failure, MapFailure>> {
-        FMapFParser(self, k).eraseToParser()
+        FMapFParser(self.eraseToParser(), k).eraseToParser()
     }
     
     func map<MapOutput, MapFailure>(_ f: @escaping (Output) -> Result<MapOutput, MapFailure>) -> Parser<MapOutput, MapFailure> where Failure == Never {
-        FMapParser(self, f).eraseToParser()
+        FMapParser(self.eraseToParser(), f).eraseToParser()
     }
     func map<MapOutput>(_ f: @escaping (Output) throws -> MapOutput) -> Parser<MapOutput, Error> where Failure == Never {
-        FMapParser(self, f).eraseToParser()
+        FMapParser(self.eraseToParser(), f).eraseToParser()
     }
     func map<MapOutput, MapFailure>(_ k: KeyPath<Output, Result<MapOutput, MapFailure>>) -> Parser<MapOutput, MapFailure> where Failure == Never {
-        FMapParser(self, k).eraseToParser()
+        FMapParser(self.eraseToParser(), k).eraseToParser()
     }
     
     func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> Parser<MapOutput, Failure> {
-        MapFParser(self, f).eraseToParser()
+        MapFParser(self.eraseToParser(), f).eraseToParser()
     }
     func map<MapOutput>(_ k: KeyPath<Output, MapOutput>) -> Parser<MapOutput, Failure> {
-        MapFParser(self, k).eraseToParser()
+        MapFParser(self.eraseToParser(), k).eraseToParser()
     }
     
     func map<MapOutput>(_ f: @escaping (Output) -> MapOutput) -> Parser<MapOutput, Never> where Failure == Never {
-        MapParser(self, f).eraseToParser()
+        MapParser(self.eraseToParser(), f).eraseToParser()
     }
     func map<MapOutput>(_ k: KeyPath<Output, MapOutput>) -> Parser<MapOutput, Never> where Failure == Never {
-        MapParser(self, k).eraseToParser()
+        MapParser(self.eraseToParser(), k).eraseToParser()
     }
 }

@@ -36,8 +36,8 @@
 //    }
 //}
 //
-//public extension Parser {
+//public extension ParserProtocol {
 //    func `repeat`() -> Parser<[Output], RepeatParserFailure<Output, Failure>> {
-//        RepeatParser(self).parser
+//        RepeatParser(self).eraseToParser()
 //    }
 //}

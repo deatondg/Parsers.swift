@@ -6,7 +6,8 @@ public struct Parser<Output, Failure: Error>: ParserProtocol {
     public func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure> {
         self.primitiveParser(string, index)
     }
-    public var parser: Parser<Output, Failure> { self }
+    
+    public func eraseToParser() -> Parser<Output, Failure> { self }
     
     // TODO: Update this API
     init(__primitiveParser: @escaping PrimitiveParser<Output, Failure>) {
@@ -37,6 +38,9 @@ public protocol ParserProtocol {
     associatedtype Failure: Error
     
     func parse(from string: String, startingAt index: String.Index) -> Result<(value: Output, endIndex: String.Index), Failure>
+    
+    /// This is inside the protocol instead of just in an extension so that the default implementation can be overridden.
+    func eraseToParser() -> Parser<Output, Failure>
 }
 
 // TODO: Use the correct API
