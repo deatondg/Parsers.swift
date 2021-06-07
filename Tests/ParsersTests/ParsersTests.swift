@@ -3,8 +3,7 @@ import XCTest
 
 final class ParsersTests: XCTestCase {
     func dyckTest() {
-        struct DyckParser: ParserProtocol {
-            typealias Stream = String
+        struct DyckParser: ParserFromBuilder {
             typealias Output = Int
             typealias Failure = Never
 
