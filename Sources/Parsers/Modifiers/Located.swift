@@ -1,6 +1,11 @@
 public struct Located<T> {
-    let value: T
-    let location: String.Index
+    public let value: T
+    public let location: String.Index
+    
+    public init(value: T, location: String.Index) {
+        self.value = value
+        self.location = location
+    }
 }
 extension Located: Error where T: Error {}
 
