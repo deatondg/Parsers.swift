@@ -162,14 +162,14 @@ public func OneOf<O0, F0: Error, O1, F1: Error, O2, F2: Error, O3, F3: Error>(@P
     return OneOf4Parser(ps.0, ps.1, ps.2, ps.3).eraseToParser()
 }
 
-public func OneOf<O0, F0: Error, O1, F1: Error, O2, F2: Error>(@ParserBuilder ps: () -> (Parser<O0, F0>?, Parser<O1, F1>?, Parser<O2, F2>)) -> Parser<OneOf3<O0, O1, O2>, AllOf3<F0?, F1?, F2>> {
-    let ps = ps()
-    
-    let p0: Parser<O0, F0?> = ps.0.orFailParser()
-    let p1: Parser<O1, F1?> = ps.1.orFailParser()
-    let p2: Parser<O2, F2> = ps.2
-    
-    let r: Parser<OneOf3<O0, O1, O2>, AllOf3<F0?, F1?, F2>> = OneOf3Parser(p0, p1, p2).eraseToParser()
-    
-    return r
-}
+//public func OneOf<O0, F0: Error, O1, F1: Error, O2, F2: Error>(@ParserBuilder ps: () -> (Parser<O0, F0>?, Parser<O1, F1>?, Parser<O2, F2>)) -> Parser<OneOf3<O0, O1, O2>, AllOf3<F0?, F1?, F2>> {
+//    let ps = ps()
+//
+//    let p0: Parser<O0, F0?> = ps.0.orFailParser()
+//    let p1: Parser<O1, F1?> = ps.1.orFailParser()
+//    let p2: Parser<O2, F2> = ps.2
+//
+//    let r: Parser<OneOf3<O0, O1, O2>, AllOf3<F0?, F1?, F2>> = OneOf3Parser(p0, p1, p2).eraseToParser()
+//
+//    fatalError()
+//}

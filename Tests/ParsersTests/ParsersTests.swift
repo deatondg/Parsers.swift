@@ -2,7 +2,7 @@ import XCTest
 @testable import Parsers
 
 final class ParsersTests: XCTestCase {
-    func dyckTest() {
+    func testDyck() {
         struct DyckParser: ParserFromBuilder {
             typealias Output = Int
             typealias Failure = Never
