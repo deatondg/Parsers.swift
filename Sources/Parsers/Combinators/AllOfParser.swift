@@ -149,6 +149,7 @@ struct AllOf4Parser<O0, F0: Error, O1, F1: Error, O2, F2: Error, O3, F3: Error>:
     }
 }
 
+// TODO: This should return better errors
 public func AllOf<O0, F0: Error>(@ParserBuilder ps: () -> Parser<O0, F0>) -> Parser<O0, OneOf1<F0>> {
     let ps = ps()
     return AllOf1Parser(ps).eraseToParser()

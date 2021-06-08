@@ -1,3 +1,4 @@
+// This is just used in OneOfParser. Probably rename this for that purpose.
 public struct AllOf1<T0> {
     public let v0: T0
     
