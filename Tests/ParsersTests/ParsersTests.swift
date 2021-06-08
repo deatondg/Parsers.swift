@@ -29,6 +29,6 @@ final class ParsersTests: XCTestCase {
         let example2 = "())()"
         let result2 = dyckParser.parse(from: example2)
         XCTAssert(result2.value == 1)
-        XCTAssert(result2.endIndex == example2.index(example2.startIndex, offsetBy: 3))
+        XCTAssert(result2.endIndex == example2.index(example2.startIndex, offsetBy: 2))
     }
 }
