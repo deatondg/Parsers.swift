@@ -33,7 +33,7 @@ final class ParsersTests: XCTestCase {
     }
     
     func testSimpleExpr() throws {
-        indirect enum Expr: ParseableFromBuilder {
+        indirect enum Expr: ParsableFromBuilder {
             case sum(Term, Expr)
             case term(Term)
             
@@ -68,7 +68,7 @@ final class ParsersTests: XCTestCase {
             }
         }
         
-        indirect enum Term: ParseableFromBuilder {
+        indirect enum Term: ParsableFromBuilder {
             case product(Factor, Term)
             case factor(Factor)
             
@@ -104,7 +104,7 @@ final class ParsersTests: XCTestCase {
             }
         }
         
-        indirect enum Factor: ParseableFromBuilder {
+        indirect enum Factor: ParsableFromBuilder {
             case expr(Expr)
             case value(Int)
             
@@ -154,7 +154,7 @@ final class ParsersTests: XCTestCase {
             case expectedCloseParen(String.Index)
         }
         
-        indirect enum Expr: ParseableFromBuilder {
+        indirect enum Expr: ParsableFromBuilder {
             case sum(Term, Expr)
             case term(Term)
             
@@ -188,7 +188,7 @@ final class ParsersTests: XCTestCase {
             }
         }
         
-        indirect enum Term: ParseableFromBuilder {
+        indirect enum Term: ParsableFromBuilder {
             case product(Factor, Term)
             case factor(Factor)
             
@@ -222,7 +222,7 @@ final class ParsersTests: XCTestCase {
             }
         }
         
-        indirect enum Factor: ParseableFromBuilder {
+        indirect enum Factor: ParsableFromBuilder {
             case expr(Expr)
             case value(Int)
             

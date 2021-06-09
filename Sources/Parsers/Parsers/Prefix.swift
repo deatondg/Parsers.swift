@@ -30,13 +30,20 @@ public extension Parsers {
     }
 }
 
-extension Collection where Element == Character {
+public extension Collection where Element == Character {
     func prefixParser() -> Parser<Substring, NoMatchFailure> {
         Parsers.prefix(self)
     }
 }
-extension Character {
-    func prefixParser() -> Parser<Substring, NoMatchFailure> {
+extension Character: UsableInParserBuilder {
+    public typealias ParserBuilderOutput = Substring
+    public typealias ParserBuilderFailure = NoMatchFailure
+    
+    public func prefixParser() -> Parser<Substring, NoMatchFailure> {
         Parsers.prefix(self)
+    }
+    
+    public func parserForBuilder() -> Parser<Substring, NoMatchFailure> {
+        self.prefixParser()
     }
 }

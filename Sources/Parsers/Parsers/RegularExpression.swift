@@ -36,11 +36,18 @@ struct RegularExpressionNextMatchParser: ParserProtocol {
     }
 }
 
-public extension NSRegularExpression {
-    func prefixParser() -> Parser<RegularExpressionMatch, NoMatchFailure> {
+extension NSRegularExpression: UsableInParserBuilder {
+    public typealias ParserBuilderOutput = RegularExpressionMatch
+    public typealias ParserBuilderFailure = NoMatchFailure
+    
+    public func prefixParser() -> Parser<RegularExpressionMatch, NoMatchFailure> {
         RegularExpressionPrefixParser(self).eraseToParser()
     }
-    func nextMatchParser() -> Parser<(prefix: Substring, match: RegularExpressionMatch), NoMatchFailure> {
+    public func nextMatchParser() -> Parser<(prefix: Substring, match: RegularExpressionMatch), NoMatchFailure> {
         RegularExpressionNextMatchParser(self).eraseToParser()
+    }
+    
+    public func parserForBuilder() -> Parser<RegularExpressionMatch, NoMatchFailure> {
+        self.prefixParser()
     }
 }

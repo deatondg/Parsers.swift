@@ -4,20 +4,36 @@ public enum ParserBuilder {
     public static func buildExpression<Output, Failure: Error>(_ p: Parser<Output, Failure>) -> Parser<Output, Failure> {
         p
     }
-    public static func buildExpression<P: ParserProtocol>(_ p: P) -> Parser<P.Output, P.Failure> {
-        p.eraseToParser()
+    public static func buildExpression<P: UsableInParserBuilder>(_ p: P) -> Parser<P.ParserBuilderOutput, P.ParserBuilderFailure> {
+        p.parserForBuilder()
     }
+    /// Structural types cannot conform to protocols
     public static func buildExpression<Output, Failure: Error>(_ p: @escaping PrimitiveParser<Output, Failure>) -> Parser<Output, Failure> {
         Parser(__primitiveParser: p)
     }
-    public static func buildExpression<P: Parseable>(_ p: P.Type) -> Parser<P, P.ParseFailure> {
-        Parsers.for(P.self)
+    /// Metatypes cannot conform to protocols
+    public static func buildExpression<P: Parsable>(_ p: P.Type) -> Parser<P, P.ParseFailure> {
+        Parsers.of(p)
     }
+    /// We cannot extend Collection to conform to UsableInParserBuilder
     public static func buildExpression<PossiblePrefix: Collection>(_ p: PossiblePrefix) -> Parser<Substring, NoMatchFailure> where PossiblePrefix.Element == Character {
         Parsers.prefix(p)
     }
-    public static func buildExpression(_ p: Character) -> Parser<Substring, NoMatchFailure> {
-        Parsers.prefix(p)
+    
+    public static func buildExpression<Output, Failure: Error>(_ p: Parser<Output, Failure>?) -> Parser<Output, Failure>? {
+        p
+    }
+    public static func buildExpression<P: UsableInParserBuilder>(_ p: P?) -> Parser<P.ParserBuilderOutput, P.ParserBuilderFailure>? {
+        p?.parserForBuilder()
+    }
+    public static func buildExpression<Output, Failure: Error>(_ p: PrimitiveParser<Output, Failure>?) -> Parser<Output, Failure>? {
+        p.map(Parser.init(__primitiveParser:))
+    }
+    public static func buildExpression<P: Parsable>(_ p: P.Type?) -> Parser<P, P.ParseFailure>? {
+        p.map(Parsers.of)
+    }
+    public static func buildExpression<PossiblePrefix: Collection>(_ p: PossiblePrefix?) -> Parser<Substring, NoMatchFailure>? where PossiblePrefix.Element == Character {
+        p.map(Parsers.prefix)
     }
     
     public static func buildBlock<O0, F0: Error>(_ p0: Parser<O0, F0>) -> Parser<O0, F0> {
