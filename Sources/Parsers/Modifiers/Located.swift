@@ -1,10 +1,10 @@
 public struct Located<T> {
     public let value: T
-    public let location: String.Index
+    public let index: String.Index
     
-    public init(value: T, location: String.Index) {
+    public init(value: T, index: String.Index) {
         self.value = value
-        self.location = location
+        self.index = index
     }
 }
 extension Located: Error where T: Error {}
@@ -23,7 +23,7 @@ struct LocatedFailuresParser<Output, ParseFailure: Error>: ParserProtocol {
         case .success(let (output, index)):
             return .success((output, index))
         case .failure(let failure):
-            return .failure(.init(value: failure, location: index))
+            return .failure(.init(value: failure, index: index))
         }
     }
 }

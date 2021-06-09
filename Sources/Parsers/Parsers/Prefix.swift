@@ -29,3 +29,14 @@ public extension Parsers {
         PrefixParser(p).eraseToParser()
     }
 }
+
+extension Collection where Element == Character {
+    func prefixParser() -> Parser<Substring, NoMatchFailure> {
+        Parsers.prefix(self)
+    }
+}
+extension Character {
+    func prefixParser() -> Parser<Substring, NoMatchFailure> {
+        Parsers.prefix(self)
+    }
+}

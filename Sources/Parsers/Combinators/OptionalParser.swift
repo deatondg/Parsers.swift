@@ -1,7 +1,27 @@
-extension Optional: Error where Wrapped: Error {}
+@frozen
+public enum OptionalFailure<Failure: Error>: Error, ExpressibleByNilLiteral {
+    case none
+    case failure(Failure)
+
+    public init(nilLiteral: ()) {
+        self = .none
+    }
+    public init(_ failure: Failure?) {
+        self = failure.map(OptionalFailure.failure) ?? .none
+    }
+    
+    var failure: Failure? {
+        switch self {
+        case .none:
+            return nil
+        case .failure(let failure):
+            return failure
+        }
+    }
+}
 
 struct ParseOrFailParser<Output, ParseFailure: Error>: ParserProtocol {
-    typealias Failure = ParseFailure?
+    typealias Failure = OptionalFailure<ParseFailure>
     
     let p: Parser<Output, ParseFailure>?
     
@@ -15,7 +35,7 @@ struct ParseOrFailParser<Output, ParseFailure: Error>: ParserProtocol {
             case .success(let (output, index)):
                 return .success((output, index))
             case .failure(let failure):
-                return .failure(failure)
+                return .failure(.failure(failure))
             }
         } else {
             return .failure(nil)
@@ -24,7 +44,7 @@ struct ParseOrFailParser<Output, ParseFailure: Error>: ParserProtocol {
 }
 
 public extension Optional where Wrapped: ParserProtocol {
-    func orFailParser() -> Parser<Wrapped.Output, Wrapped.Failure?> {
+    func orFailParser() -> Parser<Wrapped.Output, OptionalFailure<Wrapped.Failure>> {
         ParseOrFailParser(self?.eraseToParser()).eraseToParser()
     }
 }
