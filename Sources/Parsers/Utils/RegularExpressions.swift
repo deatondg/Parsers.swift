@@ -40,7 +40,7 @@ public struct RegularExpressionMatch: RandomAccessCollection {
     public subscript(position: Int) -> Substring? {
         string[result.range(at: position)]
     }
-    public subscript(name name: String) -> Substring? {
+    public subscript(named name: String) -> Substring? {
         string[result.range(withName: name)]
     }
     // TODO: Is this safe?
